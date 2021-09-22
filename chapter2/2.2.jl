@@ -7,18 +7,19 @@ point=rotation(tempo[1], tempo[2], pi/4)+points[1]
 insert!(points,2, point)
 
 for step in 1:20
+
     i=1
     while points[i]!= points[end]
-        temp=(points[i+1]-points[i])/sqrt(2)
-        point1=rotation(temp[1], temp[2], pi/4)+points[i]
+        temp1=(points[i+1]-points[i])/sqrt(2)
+        point1=rotation(temp1[1], temp1[2], +pi/4)+points[i]
         insert!(points, i+1, point1)
-        point2=rotation(temp[1], temp[2], -pi/4)+points[i+2]
+        temp2=(points[i+3]-points[i+2])/sqrt(2)
+        point2=rotation(temp2[1], temp2[2], -pi/4)+points[i+2]
         insert!(points,i+3, point2)
         i+=4
     end
 end
 
 
-
-
-plot(hcat(points...)[1,:] , hcat(points...)[2,:])
+plot(hcat(points...)[1,1:floor(Int,length(points)/2)] , hcat(points...)[2,1:floor(Int, length(points)/2)], color=:blue)
+plot!(hcat(points...)[1,floor(Int, length(points)/2):end], hcat(points...)[2,floor(Int, length(points)/2):end], color=:red)
