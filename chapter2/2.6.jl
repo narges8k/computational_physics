@@ -9,7 +9,7 @@ f_list=[f1, f2, f3, f4]
 
 
 p=100
-num=100000
+num=500000
 finalPoints=[]
 
 for number_of_points in 1:num
@@ -21,4 +21,5 @@ for number_of_points in 1:num
     end
     push!(finalPoints, point)
 end
-scatter(hcat(finalPoints...)[1,:], hcat(finalPoints...)[2,:],markersize=0.7, color=:green)
+scatter(hcat(finalPoints...)[1,:], hcat(finalPoints...)[2,:],markersize=0.7, color=:green, xlabel="x", ylabel="y", legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\report\\RandomBarnsleyFern.png")

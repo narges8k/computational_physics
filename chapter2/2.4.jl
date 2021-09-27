@@ -26,5 +26,6 @@ for row in numberslist
     y-=1
 end
 
-scatter(hcat(odd_num_pos...)[1,:], hcat(odd_num_pos...)[2,:], color=:green,  markersize=0.7)
-scatter!(hcat(even_num_pos...)[1,:], hcat(even_num_pos...)[2,:], color=:red, markersize=0.7)
+scatter(hcat(odd_num_pos...)[1,:], hcat(odd_num_pos...)[2,:], color=:darkgreen, xlabel="x", ylabel="y",markersize=0.7,legend=false)
+scatter!(hcat(even_num_pos...)[1,:], hcat(even_num_pos...)[2,:], color=:lightsalmon, xlabel="x", ylabel="y", markersize=0.7,legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\report\\KhayyamTriangle.png")

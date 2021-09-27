@@ -15,4 +15,5 @@ for step in 1:10
 end
 
 
-plot(hcat(points...)[1,:] , hcat(points...)[2,:])
+plot(hcat(points...)[1,:] , hcat(points...)[2,:],xlabel="x", ylabel="y")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\report\\Fig\\Koch.png")

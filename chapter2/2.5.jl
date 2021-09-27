@@ -4,7 +4,7 @@ function1(point)=point/2
 function2(point)=point/2+[1;0]
 function3(point)=point/2+[1/2;sqrt(3)/2]
 
-num=50000
+num=500000
 p=100
 finalPoints=[]
 for number_of_points in 1:num
@@ -14,4 +14,5 @@ for number_of_points in 1:num
     end
     push!(finalPoints, point)
 end
-scatter(hcat(finalPoints...)[1,:], hcat(finalPoints...)[2,:],markersize=0.7, color=:purple)
+scatter(hcat(finalPoints...)[1,:], hcat(finalPoints...)[2,:],markersize=0.7, color=:purple, xlabel="x", ylabel="y")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\report\\Fig\\SierpinskiRandomTriangle.png")

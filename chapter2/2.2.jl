@@ -21,5 +21,6 @@ for step in 1:20
 end
 
 
-plot(hcat(points...)[1,1:floor(Int,length(points)/2)] , hcat(points...)[2,1:floor(Int, length(points)/2)], color=:blue)
-plot!(hcat(points...)[1,floor(Int, length(points)/2):end], hcat(points...)[2,floor(Int, length(points)/2):end], color=:red)
+plot(hcat(points...)[1,1:floor(Int,length(points)/2)] , hcat(points...)[2,1:floor(Int, length(points)/2)], color=:blue, border=:none)
+plot!(hcat(points...)[1,floor(Int, length(points)/2):end], hcat(points...)[2,floor(Int, length(points)/2):end], color=:red, border=:none)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\report\\Fig\\DragonFractal.png")

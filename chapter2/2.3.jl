@@ -25,9 +25,10 @@ end
 plot()
 for little_triangles in result_triangles
     #println(little_triangles)
-    plot!(hcat(little_triangles...)[1,:] , hcat(little_triangles...)[2,:], fill=(0,0.5,"orange"))
+    plot!(hcat(little_triangles...)[1,:] , hcat(little_triangles...)[2,:], fill=(0,0.5,"orange"), legend=false)
 end
 plot!()
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\Fig\\SierpinskiTriangle.png")
 # plot(hcat(first_triangle...)[1,:],hcat(first_triangle...)[2,:])
 # plot!(hcat(second_triangle...)[1,:],hcat(second_triangle...)[2,:])
 # plot!(hcat(third_triangle...)[1,:],hcat(third_triangle...)[2,:])
