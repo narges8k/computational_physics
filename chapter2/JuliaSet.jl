@@ -14,7 +14,7 @@ for x in -1.0:0.005:1.0
         ypixel+=1
         for n in 1:10
             z=z^2 + c
-            if abs(z)> 1
+            if abs(z)> ((1+sqrt(1+4*sqrt(abs(c))))/2)
                 res[xpixel,ypixel]=(abs(z)%num)
                 break
             else
@@ -24,5 +24,5 @@ for x in -1.0:0.005:1.0
     end
 end
 
-heatmap( res, c = cgrad(:thermal, rev = true),dpi=200, legend = false, border=:none, title="c=-0.4+0.6i")
+heatmap( res, c = cgrad(:berlin, scale = :log),dpi=200, legend = false, border=:none, title="c=-0.4+0.6im")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter2\\Fig\\JuliaSetc6.png")
