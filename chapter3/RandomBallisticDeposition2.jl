@@ -87,4 +87,5 @@ for i in 1:19
     push!(BiggerStdList, std(tempvalue))
     push!(BiggerMeanList, mean(tempvalue))
 end
-plot(log.(time), log.(BiggerMeanList),yerr=BiggerStdList)
+plot(log.(time), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDeposition3.png")
