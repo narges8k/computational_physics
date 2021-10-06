@@ -73,4 +73,7 @@ for particle in 1:n
     meanList=mean_calculater(arr,meanList)
 end
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
-scatter!(1:n,meanList, xlabel="time", ylabel="mean hight of the layer")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation.png")
+
+scatter(1:n,meanList, xlabel="time", ylabel="mean hight of the layer")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation2.png")
