@@ -6,6 +6,20 @@ meanList=[]
 stdList=[]
 BigStdList=[]
 arr=zeros((L,L))
+for i in 1:L
+    arr[i,ceil.(Int, L/2)]=-1
+end
+for row in 2:L
+    for col in 1:L
+        if arr[row,col]==-1
+            if arr[row,col+1]==0.0 || arr[row,col-1]==0.0
+                for i in 1:L
+                    arr[i,col]=-1
+                end
+            end
+        end
+    end
+end
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -69,9 +83,3 @@ function deposing(arr,L,n, color,meanList, stdList)
     return arr, meanList, stdList
 end
 arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList)
-heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
-scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
-plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
