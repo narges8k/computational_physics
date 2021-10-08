@@ -1,69 +1,74 @@
 using Plots
-using CircularArrays
-n=300 #the number of particles
-L=50 #Length of the line
-color=1 #used for color-change
-MainArray=zeros((L,L))
-
-function particle_falling(MainArray, col, L, color) #this function operates falling of the particle
-    row=height_checker(MainArray, col) #the particle stops at this height(row)
-    if row!=L
-        MainArray[row+1][col]=color
-    end
-    return MainArray
-end
-
-
-function height_checker(MainArray, col) #comparing the  of the column the particle exists in, with its neighbors
-    height=height_calculater(MainArray, col-1, [],L)
-    if height[2]<height[1] || height[2]<height[3] #the other two neighbors' heights are higher.
-        if height[1]==height[3]
-            the_row_num=rand((height[1], height[3]))
-        end
-        if height[1]!=height[3]
-            the_row_num=max(height[1], height[3]) #if the two neighbors have equall heights, then the maximum height will be chosen.
-        end
+using Statistics
+L=200
+color=1
+meanList=[]
+stdList=[]
+BigStdList=[]
+arr=zeros((L,L))
+function BoundaryCondition(i)
+    if i==L+1
+        return 1
+    elseif i==0
+        return L
     else
-        the_row_num=height[2]
-    end
-    return the_row_num
-end
-
-function boundary_conditions(MainArray, c_index)
-    if MainArray
-        (c_index+2)=1
-    end
-    if (c_index+1)==1
-        c_index=L
+        return i
     end
 end
-function height_calculater(MainArray, c_index, height,L) #This function calculates the height of the three columns we must know.
-    for column in eachcol(MainArray)
-        while indexCounter<=3
-            if column==c_index
-                indexCounter=1
-                count=0
-                for element in column
-                    if element!=0.0
-                        count+=1
-                    end
-                end
-                push!(height, count)
-            end
-            c_index+=1
-            indexCounter+=1
+function height_cal(i,arr,h) #calculating the height of the layer in a column
+    i=BoundaryCondition(i)
+    row=1
+    height=0
+    for j in 1:L
+        if arr[row,i]!=0.0
+            height+=1
+            row+=1
+        else
+            break #exit the loop for the next column
         end
     end
-    #println(height)
-    return height # is a list of the heights[col-1, col, col+1]
+    push!(h, height)
+    return height, h #h is a list of columns' heights
 end
-
-for i in 1:n
-    column= rand(1:L)
-    MainArray=particle_falling(MainArray,column, L,color)
-    if i%(10*200*color)==0
-        color+=1
+function neighbor_checking(arr, col)
+    h=[] #choosing which column to fall into
+    for i in (col-1):1:(col+1)
+        height, h= height_cal(i,arr,h)
     end
+    #println(maximum(h), h)
+    return maximum(h) #returning the column respectively
 end
-
+function mean_and_std_calculater(arr,meanList,stdList,L)
+    h=[]
+    for col in eachcol(arr)
+        height, h= height_cal(col,arr,h)
+    end
+    mean_num=mean(h)
+    push!(meanList, mean_num)
+    std_num=std(h)
+    push!(stdList, std_num)
+    return meanList,stdList
+end
+function deposing(arr,L,n, color,meanList, stdList)
+    for particle in 1:n
+        col=rand(1:L)
+        height=neighbor_checking(arr, col)
+        if arr[height,col]==0.0
+            arr[height,col]=color
+        elseif arr[height, col]!=0.0 || height==0
+            arr[height+1,col]=color
+        end
+        if particle%(10*200*color)==0
+            color+=1
+        end
+        #meanList, stdList=mean_and_std_calculater(arr,meanList,stdList,L)
+    end
+    return arr, meanList, stdList
+end
+arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
+scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
+plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")

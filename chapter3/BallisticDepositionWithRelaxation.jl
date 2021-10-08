@@ -5,6 +5,7 @@ L=200
 color=1
 meanList=[]
 stdList=[]
+BigStdList=[]
 arr=zeros((L,L))
 function BoundaryCondition(i)
     if i==L+1
@@ -71,7 +72,7 @@ function deposing(arr,L,n, color,meanList, stdList)
     end
     return arr, meanList, stdList
 end
-arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList) #for plotting the ddynamics and mean: n=30000, color=1
+arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList) #for plotting the dynamics and mean: n=30000, color=1
 function LTMS_calculating(arr,L,meanList, stdList)
     t_interval=ceil.(Int, exp.(1:0.5:10))
     for i in 1:18
