@@ -2,11 +2,7 @@ using Plots
 using DataStructures
 using Statistics
 L=200
-color=1
-meanList=[]
-stdList=[]
 BigStdList=[]
-arr=zeros((L,L))
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -39,20 +35,20 @@ function ColumnChoosing(arr, col) #choosing which column to fall into
     hArr=collect(keys(h_dict)) #having all the heights in an array
     return get(h_dict,min(hArr...), "ERROR") #returning the column respectively
 end
-function mean_and_std_calculater(arr,meanList,stdList,L)
+function mean_and_std_calculater(arr,L)
     h=[]
     for i in 1:L
         i=BoundaryCondition(i)
         height= height_cal(i,arr)
         push!(h, height)
     end
-    mean_num=mean(h)
-    push!(meanList, mean_num)
-    std_num=std(h)
-    push!(stdList, std_num)
-    return meanList,stdList
+    return mean(h), std(h)
 end
-function deposing(arr,L,n, color,meanList, stdList)
+function deposing(L,n)
+    color=1
+    meanList=[]
+    stdList=[]
+    arr=zeros((L,L))
     for particle in 1:n
         column=rand(1:L)
         col=ColumnChoosing(arr, column)
@@ -68,16 +64,18 @@ function deposing(arr,L,n, color,meanList, stdList)
         if particle%(10*200*color)==0
             color+=1
         end
-        meanList, stdList=mean_and_std_calculater(arr,meanList,stdList,L)
+        meanNum, stdNum=mean_and_std_calculater(arr,L)
+        push!(meanList, meanNum)
+        push!(stdList, stdNum)
     end
     return arr, meanList, stdList
 end
-arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList) #for plotting the dynamics and mean: n=30000, color=1
+arr,meanList, stdList=deposing(L,30000) #for plotting the dynamics and mean: n=30000
 function LTMS_calculating(arr,L,meanList, stdList)
     t_interval=ceil.(Int, exp.(1:0.5:10))
     for i in 1:18
         n=t_interval[i+1]-t_interval[i]
-        arr,meanList, stdList=deposing(arr,L,n,1,meanList, stdList)
+        arr,meanList, stdList=deposing(L,n)
     end
     return stdList
 end
@@ -93,7 +91,7 @@ BiggerMeanList=[]
 BiggerStdList=[]
 for i in 1:19
     tempvalue=[]
-    for j in 1:100
+    for j in 1:10
         push!(tempvalue,BigStdList[j][i])
     end
     push!(BiggerStdList, std(tempvalue))
@@ -103,5 +101,5 @@ heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel=
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation.png")
 scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation2.png")
-plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+plot(log.(1:0.5:10), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation3.png")
