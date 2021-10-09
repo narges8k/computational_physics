@@ -1,11 +1,6 @@
 using Plots
 using Statistics
 L=200
-color=1
-meanList=[]
-stdList=[]
-BigStdList=[]
-arr=zeros((L,L))
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -41,37 +36,41 @@ function neighbor_checking(arr, col)
     end
     return maximum(h)
 end
-function mean_and_std_calculater(arr,meanList,stdList,L)
+function mean_and_std_calculater(arr,L)
     h=[]
     for i in 1:L
         height= height_cal(i,arr)
         push!(h, height)
     end
-    mean_num=mean(h)
-    push!(meanList, mean_num)
-    std_num=std(h)
-    push!(stdList, std_num)
-    return meanList,stdList
+    return mean(h),std(h)
 end
-function deposing(arr,L,n, color,meanList, stdList)
+function deposing(L,n)
+    arr=zeros((200, 200))
+    meanList=[]
+    stdList=[]
+    color=1
+    finalP=n
     for particle in 1:n
         col=rand(1:L)
         height=neighbor_checking(arr, col)
         if height>=L
+            finalP=particle
             break
         end
         arr[height, col]=color
         if particle%(10*200*color)==0
             color+=1
         end
-        meanList, stdList=mean_and_std_calculater(arr,meanList,stdList,L)
+        meanNum, stdNum=mean_and_std_calculater(arr,L)
+        push!(meanList, meanNum)
+        push!(stdList, stdNum)
     end
-    return arr, meanList, stdList
+    return arr, meanList, stdList, finalP
 end
-arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList)
+arr,meanList, stdList, finalP=deposing(L,30000)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
-scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
+scatter(1:finalP-1,meanList, xlabel="time", ylabel="mean height of the layer")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
-plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
+#plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
