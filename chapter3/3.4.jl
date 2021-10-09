@@ -6,21 +6,21 @@ meanList=[]
 stdList=[]
 BigStdList=[]
 arr=zeros((L,L))
-function BoundaryCondition(i, AvailableCols)
-    if i==AvailableCols[end]+1
-        return AvailableCols[1]
-    elseif i==AvailableCols[1]-1
-        return AvailableCols[end]
+function BoundaryCondition(i)
+    if i==L+1
+        return 1
+    elseif i==0
+        return L
     else
         return i
     end
 end
-function height_cal(i,arr, AvailableCols) #calculating the height of the layer in a column
-    i=BoundaryCondition(i, AvailableCols)
+function height_cal(i,arr) #calculating the height of the layer in a column
+    i=BoundaryCondition(i)
     row=L #starting from the top layer
     height=L
     for j in 1:L
-        if arr[row,i]==-1 #when the entry is empty
+        if arr[row,i]==0.0 #when the entry is empty
             height-=1 #decreasing height by one
             row-=1
         else
@@ -29,23 +29,22 @@ function height_cal(i,arr, AvailableCols) #calculating the height of the layer i
     end
     return height
 end
-function neighbor_checking(arr, col, AvailableCols)
+function neighbor_checking(arr, col)
     h=[]
     for i in (col-1):1:(col+1)
-        height= height_cal(i,arr, AvailableCols)
+        height= height_cal(i,arr)
         if i==col
             push!(h, (height+1))
         else
             push!(h, height)
         end
     end
-    println("max:", maximum(h), h)
     return maximum(h)
 end
-function mean_and_std_calculater(arr,meanList,stdList,L, AvailableCols)
+function mean_and_std_calculater(arr,meanList,stdList,L)
     h=[]
     for i in 1:L
-        height= height_cal(i,arr, AvailableCols)
+        height= height_cal(i,arr)
         push!(h, height)
     end
     mean_num=mean(h)
@@ -55,25 +54,17 @@ function mean_and_std_calculater(arr,meanList,stdList,L, AvailableCols)
     return meanList,stdList
 end
 function deposing(arr,L,n, color,meanList, stdList)
-    AvailableCols=[ceil(Int, L/2)]
-    for i in 1:L
-        arr[i, ceil(Int, L/2)]=-1
-    end
     for particle in 1:n
-        col=rand(AvailableCols)
-        height=neighbor_checking(arr, col, AvailableCols)
+        col=rand(1:L)
+        height=neighbor_checking(arr, col)
         if height>=L
             break
         end
-        arr[height, col]=color
+        if height!=1 || col==ceil(Int, L/2)
+            arr[height, col]=color
+        end
         if particle%(10*200*color)==0
             color+=1
-        end
-        for i in (col-1):1:(col+1)
-            for j in (height+1):L
-                arr[j, i]=-1
-                push!(AvailableCols, i)
-            end
         end
         #meanList, stdList=mean_and_std_calculater(arr,meanList,stdList,L)
     end
@@ -81,3 +72,8 @@ function deposing(arr,L,n, color,meanList, stdList)
 end
 arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
+#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
+#scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
+#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
+#plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
