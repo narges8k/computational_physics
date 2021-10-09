@@ -36,18 +36,18 @@ function neighbor_checking(arr, col)
     end
     return maximum(h)
 end
-function mean_and_std_calculater(arr,L)
+function mean_calculater(arr,L)
     h=[]
     for i in 1:L
+        i=BoundaryCondition(i)
         height= height_cal(i,arr)
         push!(h, height)
     end
-    return mean(h),std(h)
+    return mean(h)
 end
 function deposing(L,n)
     arr=zeros((200, 200))
     meanList=[]
-    stdList=[]
     color=1
     finalP=n
     for particle in 1:n
@@ -61,9 +61,8 @@ function deposing(L,n)
         if particle%(10*200*color)==0
             color+=1
         end
-        meanNum, stdNum=mean_and_std_calculater(arr,L)
+        meanNum=mean_calculater(arr,L)
         push!(meanList, meanNum)
-        push!(stdList, stdNum)
     end
     return arr, meanList, stdList, finalP
 end
@@ -72,5 +71,3 @@ heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel=
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
 scatter(1:finalP-1,meanList, xlabel="time", ylabel="mean height of the layer")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
-#plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
-#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
