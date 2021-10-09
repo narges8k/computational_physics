@@ -1,11 +1,6 @@
 using Plots
 using Statistics
 L=201
-color=1
-meanList=[]
-stdList=[]
-BigStdList=[]
-arr=zeros((L,L))
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -41,19 +36,11 @@ function neighbor_checking(arr, col)
     end
     return maximum(h)
 end
-function mean_and_std_calculater(arr,meanList,stdList,L)
-    h=[]
-    for i in 1:L
-        height= height_cal(i,arr)
-        push!(h, height)
-    end
-    mean_num=mean(h)
-    push!(meanList, mean_num)
-    std_num=std(h)
-    push!(stdList, std_num)
-    return meanList,stdList
-end
-function deposing(arr,L,n, color,meanList, stdList)
+function deposing(L,n)
+    color=1
+    arr=zeros((L,L))
+    meanList=[]
+    stdList=[]
     for particle in 1:n
         col=rand(1:L)
         height=neighbor_checking(arr, col)
@@ -66,14 +53,45 @@ function deposing(arr,L,n, color,meanList, stdList)
         if particle%(10*200*color)==0
             color+=1
         end
-        #meanList, stdList=mean_and_std_calculater(arr,meanList,stdList,L)
     end
-    return arr, meanList, stdList
+    return arr
 end
-arr,meanList, stdList=deposing(arr,L,30000, 1 ,meanList, stdList)
+arr=deposing(L,30000)
+
+firstx=0
+firsty=0
+col=1 #starting from the beggining
+for i in 1:L
+    for row in 1:L
+        if arr[row, col]!=0.0
+            firstx=col
+            firsty=row
+            break
+        end
+    end
+    if firstx!=0 && firsty!=0
+        break
+    else
+        col+=1
+    end
+end
+lastx=0
+lasty=0
+col=L #starting from the end
+for i in 1:L
+    for row in 1:L
+        if arr[row, col]!=0.0
+            lastx=col
+            lasty=row
+            break
+        end
+    end
+    if lastx!=0 && lasty!=0
+        break
+    else
+        col-=1
+    end
+end
+diameter=sqrt((firstx-lastx)^2 + (firsty-lasty)^2)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
-#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
-#scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")
-#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_2.png")
-#plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
-#savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.4.png")
