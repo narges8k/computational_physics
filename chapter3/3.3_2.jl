@@ -55,8 +55,8 @@ L=200
 arr=zeros((L,L))
 color=1
 stdList=[]
-t_interval=ceil.(Int, exp.(1:0.5:10))
-for i in 1:18
+t_interval=ceil.(Int, exp.(1:0.5:14))
+for i in 1:26
     falling_n=t_interval[i+1]-t_interval[i]
     for each in 1:falling_n
         finalP=t_interval[18]
@@ -80,8 +80,8 @@ for num in 1:run_number
     arr=zeros((L,L))
     color=1
     stdList=[]
-    time=ceil.(Int, exp.(0:0.5:10))
-    for i in 1:20
+    time=ceil.(Int, exp.(0:0.5:14))
+    for i in 1:26
         falling_n=time[i+1]-time[i]
         for each in 1:falling_n
             finalP=t_interval[18]
@@ -100,9 +100,10 @@ for num in 1:run_number
     end
     push!(BigStdList, stdList)
 end
+BigStdList
 BiggerMeanList=[]
 BiggerStdList=[]
-for i in 1:19
+for i in 1:26
     tempvalue=[]
     for j in 1:100
         push!(tempvalue,BigStdList[j][i])
@@ -118,7 +119,7 @@ function LineFit(Time, Mean)
     y = x .* line[1] .+ line[2]
     return x, y, line
 end
-X,Y,Line=LineFit(t_interval, BiggerMeanList)
-plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
-plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
+X,Y,Line=LineFit(t_interval[1:19], BiggerMeanList[1:19])
+plot(log.(t_interval)[1:26], log.(BiggerMeanList)[1:26],yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
+plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))", legend=:bottomright)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")
