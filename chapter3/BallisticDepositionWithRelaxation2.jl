@@ -3,7 +3,8 @@ using DataStructures
 using Statistics
 L=200
 color=1
-
+final_time=18
+time_step=0.5
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -51,10 +52,20 @@ function std_calculater(arr,stdList)
     push!(stdList, std_num)
     return stdList
 end
-t_interval=ceil.(Int, exp.(1:0.5:10))
+
+function linear_fit(x_axis, y_axis)
+    A=[hcat(log.(x_axis)) reshape(ones(18), 18, 1)]
+    B=hcat(y_axis)
+    line = (A \ B)
+    x = 1:10
+    y = x .* line[1] .+ line[2]
+    return x, y, line
+end
+
+t_interval=ceil.(Int, exp.(2:0.5:12))
 arr=zeros((L,L))
 stdList=[]
-for i in 1:18
+for i in 1:20
     n=t_interval[i+1]-t_interval[i]
     for particle in 1:n
         column=rand(1:L)
@@ -75,9 +86,10 @@ end
 BigStdList=[]
 run_number=100
 for num in 1:run_number
+    println("run number", num)
     arr=zeros((L,L))
     stdList=[]
-    for i in 1:18
+    for i in 1:20
         n=t_interval[i+1]-t_interval[i]
         for particle in 1:n
             column=rand(1:L)
@@ -99,7 +111,7 @@ end
 BigStdList
 BiggerMeanList=[]
 BiggerStdList=[]
-for i in 1:18
+for i in 1:20
     tempvalue=[]
     for j in 1:100
         push!(tempvalue,BigStdList[j][i])
@@ -107,5 +119,11 @@ for i in 1:18
     push!(BiggerStdList, std(tempvalue))
     push!(BiggerMeanList, mean(tempvalue))
 end
-plot(log.(1:0.5:10)[1:18], log.(BiggerMeanList),yerr=BiggerStdList, xlabel="t_interval", ylabel="w")
+
+X,Y,Line=linear_fit(t_interval[1:end-1], log.(BiggerMeanList))
+plot(log.(t_interval)[1:20], log.(BiggerMeanList),yerr=BiggerStdList, xlabel="t_interval", ylabel="w")
+plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation3.png")
+log.(BiggerMeanList)
+reshape(log.(BiggerMeanList), 18, 1)
+hcat(log.(BiggerMeanList))
