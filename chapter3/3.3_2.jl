@@ -1,6 +1,21 @@
 using Plots
 using Statistics
-L=200
+using LaTeXStrings
+function std_calculater(arr,stdList)
+    hight=[]
+    for col in eachcol(arr)
+        count=0
+        for element in col
+            if element!=0
+                count+=1
+            end
+        end
+        push!(hight, count)
+    end
+    std_num=std(hight)
+    push!(stdList, std_num)
+    return stdList
+end
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -36,66 +51,58 @@ function neighbor_checking(arr, col)
     end
     return maximum(h)
 end
-function std_calculater(arr,stdList)
-    hight=[]
-    for col in eachcol(arr)
-        count=0
-        for element in col
-            if element!=0
-                count+=1
-            end
-        end
-        push!(hight, count)
-    end
-    std_num=std(hight)
-    push!(stdList, std_num)
-    return stdList
-end
-
-arr=zeros((200, 200))
-stdList=[]
+L=200
+arr=zeros((L,L))
 color=1
-t_interval=ceil.(Int, exp.(1:0.5:14))
-for i in 1:26
-    n=t_interval[i+1]-t_interval[i]
-    finalP=n
-    for particle in 1:n
+stdList=[]
+t_interval=ceil.(Int, exp.(1:0.5:10))
+for i in 1:18
+    falling_n=t_interval[i+1]-t_interval[i]
+    for each in 1:falling_n
+        finalP=t_interval[18]
         col=rand(1:L)
         height=neighbor_checking(arr, col)
         if height>=L
-            finalP=particle
+            finalP=each
             break
         end
         arr[height, col]=color
+        if i%(10*200*color)==0
+            color+=1
+        end
     end
     stdList=std_calculater(arr,stdList)
 end
-
 BigStdList=[]
 run_number=100
 for num in 1:run_number
+    L=200
     arr=zeros((L,L))
+    color=1
     stdList=[]
-    for i in 1:26
-        n=t_interval[i+1]-t_interval[i]
-        finalP=n
-        for particle in 1:n
+    time=ceil.(Int, exp.(0:0.5:10))
+    for i in 1:20
+        falling_n=time[i+1]-time[i]
+        for each in 1:falling_n
+            finalP=t_interval[18]
             col=rand(1:L)
             height=neighbor_checking(arr, col)
             if height>=L
-                finalP=particle
+                finalP=each
                 break
             end
             arr[height, col]=color
+            if i%(10*200*color)==0
+                color+=1
+            end
         end
         stdList=std_calculater(arr,stdList)
     end
     push!(BigStdList, stdList)
 end
-BigStdList
 BiggerMeanList=[]
 BiggerStdList=[]
-for i in 1:26
+for i in 1:19
     tempvalue=[]
     for j in 1:100
         push!(tempvalue,BigStdList[j][i])
@@ -103,6 +110,15 @@ for i in 1:26
     push!(BiggerStdList, std(tempvalue))
     push!(BiggerMeanList, mean(tempvalue))
 end
-BiggerMeanList
-plot(hcat(1:0.5:14)[1:26], log.(BiggerMeanList),yerr=BiggerStdList, xlabel="t_interval", ylabel="w")
+function LineFit(Time, Mean)
+    a=[hcat(log.(Time)) reshape(ones(19), 19, 1)]
+    b=hcat(log.(Mean))
+    line=(a\b)
+    x = 1:10
+    y = x .* line[1] .+ line[2]
+    return x, y, line
+end
+X,Y,Line=LineFit(t_interval, BiggerMeanList)
+plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
+plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_3.png")

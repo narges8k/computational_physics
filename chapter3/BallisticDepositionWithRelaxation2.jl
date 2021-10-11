@@ -116,14 +116,15 @@ for i in 1:19
     push!(BiggerMeanList, mean(tempvalue))
 end
 function LineFit(Time, Mean)
-    a=[hcat(log.(Time)) reshape(ones(19), 19, 1)]
+    a=[hcat(log.(Time)) reshape(ones(13), 13, 1)]
     b=hcat(log.(Mean))
     line=(a\b)
     x = 1:10
     y = x .* line[1] .+ line[2]
     return x, y, line
 end
-X,Y,Line=LineFit(t_interval, BiggerMeanList)
+BiggerMeanList[7:19]
+X,Y,Line=LineFit(t_interval[7:19], BiggerMeanList[7:19])
 plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
 plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation3.png")
