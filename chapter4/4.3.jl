@@ -33,7 +33,7 @@ function percolation(dim,p)
                 if length(neighbors)==0
                     network_[row,col]=counter
                     push!(L, counter)
-                    push!(S, 1)####????!!!!!!!
+                    push!(S, 1)
                     counter+=1
                 elseif length(neighbors)==1
                     network_[row,col]=InitialLabelFinder(neighbors[1], L)
