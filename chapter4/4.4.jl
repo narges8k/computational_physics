@@ -1,5 +1,5 @@
 using Plots,Statistics
-dim=200
+dim=10
 
 function NeighborReturner(network_, i, j)
     neighbors=[]
@@ -66,7 +66,9 @@ function percolation_check(network_,L,dim)
             push!(last_col,InitialLabelFinder(network_[i,dim],L))
         end
     end
-    if length(intersect(first_col,last_col)) > 0
+    col=rand(1:dim) #choosing a random entry of the matrix
+    row=rand(1:dim)
+    if network_[row,col]!=0 && InitialLabelFinder(network_[row,col],L) in intersect(first_col,last_col)
         return 1
     else
         return 0
@@ -75,9 +77,9 @@ end
 #network_=percolation(dim, p)
 Meanlist = []
 STDlist = []
-for p in 0.5:0.005:0.7
+for p in 0.25:0.01:1
     check=[]
-    for run_num in 1:100
+    for run_num in 1:1000
         network_,L=percolation(dim,p)
         push!(check,percolation_check(network_,L,dim))
     end
@@ -85,5 +87,5 @@ for p in 0.5:0.005:0.7
     push!(Meanlist, mean(check))
 end
 Meanlist
-scatter(0.5:0.005:0.7, Meanlist, yerr=STDlist, xlabel="P", ylabel="Average Q", legend=false)
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\L=200.png")
+scatter(0.25:0.01:1, Meanlist, yerr=STDlist, xlabel="P", ylabel="Average infinite Q", legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.4_L=10.png")
