@@ -54,8 +54,8 @@ L=200
 arr=zeros((L,L))
 color=1
 stdList=[]
-t_interval=ceil.(Int, exp.(1:0.5:10))
-for i in 1:18
+t_interval=ceil.(Int, exp.(1:0.5:13))
+for i in 1:24
     falling_n=t_interval[i+1]-t_interval[i]
     for each in 1:falling_n
         column=rand(1:L)
@@ -78,12 +78,13 @@ end
 BigStdList=[]
 run_number=100
 for num in 1:run_number
+    println("run number=", num)
     L=200
     arr=zeros((L,L))
     color=1
     stdList=[]
-    time=ceil.(Int, exp.(0:0.5:10))
-    for i in 1:20
+    time=ceil.(Int, exp.(0:0.5:13))
+    for i in 1:24
         falling_n=time[i+1]-time[i]
         for each in 1:falling_n
             column=rand(1:L)
@@ -107,7 +108,7 @@ for num in 1:run_number
 end
 BiggerMeanList=[]
 BiggerStdList=[]
-for i in 1:19
+for i in 1:24
     tempvalue=[]
     for j in 1:100
         push!(tempvalue,BigStdList[j][i])
@@ -125,6 +126,6 @@ function LineFit(Time, Mean)
 end
 BiggerMeanList[7:19]
 X,Y,Line=LineFit(t_interval[7:19], BiggerMeanList[7:19])
-plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
-plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
+plot(log.(t_interval)[1:24], log.(BiggerMeanList)[1:24],yerr=BiggerStdList, xlabel="time", ylabel="w(t)")
+plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))", legend=:bottomright)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation3.png")

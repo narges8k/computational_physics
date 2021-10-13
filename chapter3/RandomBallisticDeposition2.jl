@@ -1,5 +1,6 @@
 using Plots
 using Statistics
+using LaTeXStrings
 function std_calculater(arr,stdList)
     hight=[]
     for col in eachcol(arr)
@@ -78,5 +79,15 @@ for i in 1:19
     push!(BiggerStdList, std(tempvalue))
     push!(BiggerMeanList, mean(tempvalue))
 end
-plot(log.(1:0.5:10)[1:18], log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+function LineFit(Time, Mean)
+    a=[hcat(log.(Time)) reshape(ones(19), 19, 1)]
+    b=hcat(log.(Mean))
+    line=(a\b)
+    x = 1:10
+    y = x .* line[1] .+ line[2]
+    return x, y, line
+end
+X,Y,Line=LineFit(t_interval, BiggerMeanList)
+plot(log.(t_interval), log.(BiggerMeanList),yerr=BiggerStdList, xlabel="time", ylabel="w")
+plot!(X,Y,c= :black,label = L"y = %$(round(Line[1],digits= 2))x + %$(round(Line[2],digits= 2))")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDeposition3.png")

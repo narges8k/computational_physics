@@ -1,6 +1,6 @@
 using Plots
 L=100
-p=0.5
+p=0.8
 function LimitControl(arr, i, j)
     color_change_list=[]#this list includes the neighbors' attributes
     if i+1!=L+1
@@ -78,6 +78,5 @@ end
 tot=Percolation(L,p)
 
 @gif for i in 1:1:length(tot)
-    heatmap(tot[i][:,1:end-1], c = cgrad(:copper, 10), legend = false, border = :none, title = "Percolation for P = 0.1")
+    heatmap(tot[i][:,1:end-1], c = cgrad(:copper, 10), legend = false, border = :none, title = "Percolation for P = 0.5")
 end
-#gif(anim, "../../Fig/Percolation0.3.gif")
