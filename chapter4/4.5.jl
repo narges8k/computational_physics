@@ -29,9 +29,7 @@ function percolation_check(network_,L,dim)
             push!(last_col,InitialLabelFinder(network_[i,dim],L))
         end
     end
-    if length(intersect(first_col,last_col)) > 0
-        return intersect(first_col,last_col)
-    end
+    return intersect(first_col,last_col)
 end
 function percolation(dim,p)
     network_=zeros(Int, dim, dim)
@@ -65,9 +63,11 @@ function percolation(dim,p)
     end
     return network_,L,S
 end
-function RadiusOfGyration(network_, S)
-    for j in  percolation_check(network_,L,dim)
-        S[j]=-1 # the infinit cluster is omitted from S in this way.
+function RadiusOfGyration(network_,L,S,dim)
+    if length(percolation_check(network_,L,dim)) > 0
+        for j in  percolation_check(network_,L,dim)
+            S[j]=-1 # the infinit cluster is omitted from S in this way.
+        end
     end
     RadiusOfGyration_list=[]
     for  i in 1:length(S)
@@ -88,33 +88,35 @@ function RadiusOfGyration(network_, S)
             for x in 1:dim
                 for y in 1:dim
                      if network_[x, y]==i
-                        numerator+=sqrt((x-x_com)^2 + (y-y_com)^2)
+                        numerator+=(x-x_com)^2 + (y-y_com)^2
                     end
                 end
             end
-
             push!(RadiusOfGyration_list,sqrt(numerator/S[i]))
         end
     end
     sum=0
-    counter=0
+    counter=1
+    # println(RadiusOfGyration_list)
     for i in RadiusOfGyration_list
         sum+=i
         counter+=1
     end
     return sum/counter
 end
-
-
+probability=[hcat(0:0.03:0.25)...,hcat(0.25:0.01:0.75)...,hcat(0.75:0.03:1)...]
 Meanlist = []
 STDlist = []
-for p in 0.5:0.05:1
+for p in probability
     xi=[]
     for run_num in 1:100
-        network_,L=percolation(dim,p)
-        push!(xi,RadiusOfGyration(network_, S))
+        # println("P:",p)
+        # println("RUNNUMBER:", run_num)
+        network_,L,S=percolation(dim,p)
+        push!(xi,RadiusOfGyration(network_,L,S,dim))
     end
     push!(STDlist, std(xi))
     push!(Meanlist, mean(xi))
 end
-scatter(0:0.05:1, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"ξ", legend=false)
+scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=10)",legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=10.png")
