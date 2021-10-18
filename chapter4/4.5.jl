@@ -1,5 +1,5 @@
 using Plots,Statistics,LaTeXStrings
-dim=100
+dim=10
 function NeighborReturner(network_, i, j)
     neighbors=[]
     if j!=1 && network_[i,j-1]!=0
@@ -72,30 +72,27 @@ function RadiusOfGyration(network_,L,S,dim)
     end
     cluster_size=maximum(S)
     S_max=findall(x->x==maximum(S),S)[1]
-    x_sum=0
-    y_sum=0
     numerator=0
-    for x in 1:dim
-        for y in 1:dim
-             if network_[x, y]==S_max
-                y_sum+=y
-                x_sum+=x
+    i_nums=[]
+    j_nums=[]
+    for coordinate_num in findall(x->x==S_max,network_)
+        push!(i_nums, coordinate_num[1])
+        push!(j_nums, coordinate_num[2])
+    end
+    i_com=mean(i_nums)
+    j_com=mean(j_nums)
+    TheFraction_list=[]
+    for i in 1:dim
+        for j in 1:dim
+             if network_[i, j]==S_max
+                push!(TheFraction_list,((i-i_com)^2 + (j-j_com)^2))
             end
         end
     end
-    y_com=y_sum/cluster_size
-    x_com=x_sum/cluster_size
-    for x in 1:dim
-        for y in 1:dim
-             if network_[x, y]==S_max
-                numerator+=(x-x_com)^2 + (y-y_com)^2
-            end
-        end
-    end
-    RadiusOfGyration=sqrt(numerator/cluster_size)
+    RadiusOfGyration=sqrt(mean(TheFraction_list))
     return RadiusOfGyration
 end
-probability=[hcat(0:0.03:0.25)...,hcat(0.25:0.02:0.75)...,hcat(0.75:0.03:1)...]
+probability=[hcat(0:0.03:0.30)...,hcat(0.30:0.02:0.70)...,hcat(0.70:0.03:1)...]
 Meanlist = []
 STDlist = []
 for p in probability
@@ -107,5 +104,5 @@ for p in probability
     push!(STDlist, std(xi))
     push!(Meanlist, mean(xi))
 end
-scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=100)",legend=false)
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=80.png")
+scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=10)",legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=10.png")
