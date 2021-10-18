@@ -44,17 +44,20 @@ function InitialNetwork(network_, dim,p)
   return network_, OnEntries_dict
 end
 
+function processor(network_,OnEntries_dict,dim,p)
+  for entry in keys(OnEntries_dict)
+    neighbors_dict=neighbors(network_, entry[1],entry[2], dim)
+    network_,OnEntries_dict=on_or_block(network_,dim,neighbors_dict ,p)
+  end
+  if length(OnEntries_dict)>0
+    network_,OnEntries_dict=processor(network_,OnEntries_dict,dim,p)
+  else
+    return network_,-2
+  end
+end
+
 dim=10
 p=0.7
 network_=zeros(Int,dim,dim)
 network_, OnEntries_dict=InitialNetwork(network_, dim,p)
-#if length(OnEntries_dict)>0
-for entry in keys(OnEntries_dict)
-  neighbors_dict=neighbors(network_, entry[1],entry[2], dim)
-  network_,OnEntries_dict=on_or_block(network_,dim,neighbors_dict ,p)
-  if length(OnEntries_dict)>0
-    continue
-  else
-    break
-  end
-end
+network_,sign=processor(network_,OnEntries_dict,dim,p)

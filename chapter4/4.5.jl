@@ -1,5 +1,5 @@
 using Plots,Statistics,LaTeXStrings
-dim=80
+dim=100
 function NeighborReturner(network_, i, j)
     neighbors=[]
     if j!=1 && network_[i,j-1]!=0
@@ -107,5 +107,5 @@ for p in probability
     push!(STDlist, std(xi))
     push!(Meanlist, mean(xi))
 end
-scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=80)",legend=false)
+scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=100)",legend=false)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=80.png")
