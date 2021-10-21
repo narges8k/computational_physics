@@ -1,63 +1,46 @@
 using Plots, LaTeXStrings,DataStructures
-function neighbors(network_, i,j, dim)
-  println(i,j)
-  neighbors_dict=DataStructures.OrderedDict()
-  if i+1!=dim+1 && network_[i+1,j]==0
-    neighbors_dict[[i+1,j]]=network_[i+1,j]
-  end
-  if i-1!=0 && network_[i-1,j]==0
-    neighbors_dict[[i-1,j]]=network_[i-1,j]
-  end
-  if j+1!=dim+1 && network_[i,j+1]==0
-  neighbors_dict[[i,j+1]]=network_[i,j+1]
-  end
-  if j-1!=0 && network_[i,j-1]==0
-    neighbors_dict[[i,j-1]]=network_[i,j-1]
-  end
-  return neighbors_dict
+function neighbor_checking(network_,dim,i,j)
+    neighbors_list=[]
+    if i+1!=dim+1
+        push!(neighbors_list,network_[i+1,j])
+    end
+    if i-1!=0
+        push!(neighbors_list,network_[i-1,j])
+    end
+    if j+1!=dim+1
+        push!(neighbors_list,network_[i,j+1])
+    end
+    if j-1!=0
+        push!(neighbors_list, network_[i,j-1])
+    end
+    return neighbors_list
 end
-
-function on_or_block(network_,dim,neighbors_dict ,p)
-  OnEntries_dict=DataStructures.OrderedDict()
-  for key in keys(neighbors_dict)
+function on_or_blocked(network_,dim,i,j,p)
     if p>rand()
-      OnEntries_dict[key]=1 #On
+        network_[i,j]=1
     else
-      OnEntries_dict[key]=-1 #Block
+        network_[i,j]=-1
     end
-  end
-  coordinate_arr=collect(keys(OnEntries_dict))
-  for item in coordinate_arr
-    network_[item[1],item[2]]=OnEntries_dict[item] #changing the attributes in network_, respectively
-    if OnEntries_dict[item]==-1
-      delete!(OnEntries_dict,item)
-    end
-  end
-  return network_,OnEntries_dict
+    return network_
 end
-
-function InitialNetwork(network_, dim,p)
-  network_[rand(1:dim),rand(1:dim)]=1
-  neighbors_dict=neighbors(network_, findall(x->x==1,network_)[1][1], findall(x->x==1,network_)[1][2],dim) #choosing a random entry and giving the neigbhors
-  println(neighbors_dict)#####
-  network_, OnEntries_dict=on_or_block(network_, dim, neighbors_dict,p)
-  return network_, OnEntries_dict
-end
-
-function processor(network_,OnEntries_dict,dim,p)
-  for entry in keys(OnEntries_dict)
-    neighbors_dict=neighbors(network_, entry[1],entry[2], dim)
-    network_,OnEntries_dict=on_or_block(network_,dim,neighbors_dict ,p)
-  end
-  if length(OnEntries_dict)>0
-    network_,OnEntries_dict=processor(network_,OnEntries_dict,dim,p)
-  else
-    return network_,-2
-  end
-end
-
-dim=10
 p=0.7
+dim=5
 network_=zeros(Int,dim,dim)
-network_, OnEntries_dict=InitialNetwork(network_, dim,p)
-network_,sign=processor(network_,OnEntries_dict,dim,p)
+network_[rand(1:dim),rand(1:dim)]=1 #the first entry
+for step in 1:(dim^2)
+    operation_list=[]
+    for i in 1:dim
+        for j in 1:dim
+            if network_[i,j]==0 && (1 in neighbor_checking(network_,dim,i,j))
+                push!(operation_list,[i,j])
+            end
+        end
+    end
+    if length(operation_list)>0
+        for i in operation_list
+            network_=on_or_blocked(network_,dim,i[1],i[2],p)
+        end
+    elseif length(operation_list)==0
+        break
+    end
+end
