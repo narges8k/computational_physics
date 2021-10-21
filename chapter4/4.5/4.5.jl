@@ -1,5 +1,5 @@
 using Plots,Statistics,LaTeXStrings,JLD
-dim=160
+dim=10
 function NeighborReturner(network_, i, j)
     neighbors=[]
     if j!=1 && network_[i,j-1]!=0
@@ -106,6 +106,6 @@ for p in probability
     push!(STDlist, std(xi))
     push!(Meanlist, mean(xi))
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\L=160_ClusterGrowth.jld","data", SavedData)
-scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=160)",legend=false)
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=160.png")
+
+scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=10)",legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=10.png")
