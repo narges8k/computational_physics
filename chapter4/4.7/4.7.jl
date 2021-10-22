@@ -1,4 +1,4 @@
-using Plots, LaTeXStrings,DataStructures
+using Plots, LaTeXStrings,JLD
 function neighbor_checking(network_,dim,i,j)
     neighbors_list=[]
     if i+1!=dim+1

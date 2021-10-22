@@ -1,5 +1,4 @@
 using Plots,Statistics,LaTeXStrings,JLD
-dim=160
 function NeighborReturner(network_, i, j)
     neighbors=[]
     if j!=1 && network_[i,j-1]!=0
@@ -92,20 +91,51 @@ function RadiusOfGyration(network_,L,S,dim)
     RadiusOfGyration=sqrt(mean(TheFraction_list))
     return RadiusOfGyration
 end
-probability=[hcat(0:0.03:0.30)...,hcat(0.30:0.02:0.70)...,hcat(0.70:0.03:1)...]
-Meanlist = []
-STDlist = []
-SavedData=[]
-for p in probability
-    xi=[]
-    for run_num in 1:100
-        network_,L,S=percolation(dim,p)
-        push!(xi,RadiusOfGyration(network_,L,S,dim))
+dim_list=[10,20,40,80,160]
+SavedData_std=[]
+SavedData_mean=[]
+# scatter()
+# plot()
+for n in 1:5
+    dim=dim_list[n]
+    Meanlist = []
+    STDlist = []
+    probability=[hcat(0:0.03:0.25)...,hcat(0.25:0.02:0.75)...,hcat(0.75:0.03:1)...]
+    for p in probability
+        xi=[]
+        for run_num in 1:1000
+            network_,L,S=percolation(dim,p)
+            push!(xi,RadiusOfGyration(network_,L,S,dim))
+        end
+        push!(STDlist, std(xi))
+        push!(Meanlist, mean(xi))
     end
-    push!(SavedData, xi)
-    push!(STDlist, std(xi))
-    push!(Meanlist, mean(xi))
+    push!(SavedData_std, STDlist)
+    push!(SavedData_mean, Meanlist)
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\L=160_ClusterGrowth.jld","data", SavedData)
-scatter(probability, Meanlist, yerr=STDlist, xlabel="P", ylabel=L"\xi", title=L"\xi\_ P\ (L=160)",legend=false)
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_L=160.png")
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\L=160_ClusterGrowth.jld",
+"std_data", SavedData_std,
+"mean_data", SavedData_mean)
+
+#creating the figures:
+load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\L=160_ClusterGrowth.jld")
+#plot withough error bars
+plot(dpi=400)
+for i in 1:5
+    dim=dim_list[i]
+    scatter!(probability, SavedData_mean[i][1:43],label=nothing,markersize=3,c=:black,alpha=0.3)
+    plot!(probability, SavedData_mean[i][1:43],label=L"L=%$dim")
+
+end
+scatter!(xlabel="P", ylabel=L"\xi", title=L"\xi\_ P")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_plot.png")
+#scatter plot including error bars
+plot(dpi=400)
+for i in 1:5
+    dim=dim_list[i]
+    scatter!(probability, SavedData_mean[i][1:43],yerr=SavedData_std[i][1:43],markersize=3,
+    alpha=0.7,label=L"L=%$dim")
+
+end
+scatter!(xlabel="P", ylabel=L"\xi", title=L"\xi\_ P")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_scatter.png")
