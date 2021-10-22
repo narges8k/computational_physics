@@ -1,4 +1,4 @@
-using Plots,Statistics,LaTeXStrings,JLD
+using Plots,Statistics,LaTeXStrings,JLD,LsqFit
 function NeighborReturner(network_, i, j)
     neighbors=[]
     if j!=1 && network_[i,j-1]!=0
@@ -139,3 +139,14 @@ for i in 1:5
 end
 scatter!(xlabel="P", ylabel=L"\xi", title=L"\xi\_ P")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_scatter.png")
+#getting Pc(L):
+xdata=[]
+ydata=dim_list
+for i in 1:5
+    Pc_L= probability[findall(x->x==maximum(SavedData_mean[i]),SavedData_mean[i])]
+    push!(xdata, Pc_L)
+
+end
+@.model(x,p)=abs(x-p[1])^(-p[2])
+p0=[1.3, 0.59]
+fit=curve_fit(model, xdata, ydata, p0)
