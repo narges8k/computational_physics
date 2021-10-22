@@ -94,8 +94,6 @@ end
 dim_list=[10,20,40,80,160]
 SavedData_std=[]
 SavedData_mean=[]
-# scatter()
-# plot()
 for n in 1:5
     dim=dim_list[n]
     Meanlist = []
