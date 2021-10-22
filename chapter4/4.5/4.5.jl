@@ -111,12 +111,12 @@ for n in 1:5
     push!(SavedData_std, STDlist)
     push!(SavedData_mean, Meanlist)
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\AllData_ClusterGrowth.jld",
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\AllData_HK.jld",
 "std_data", SavedData_std,
 "mean_data", SavedData_mean)
 
 #creating the figures:
-load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\AllData_ClusterGrowth.jld")
+load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\AllData_HK.jld")
 #plot withough error bars:
 plot(dpi=400)
 for i in 1:5

@@ -1,5 +1,5 @@
 using Plots,Statistics, LaTeXStrings,JLD
-dim=100
+dim=10
 function neighbor_checking(network_,dim,i,j)
     neighbors_list=[]
     if i+1!=dim+1
@@ -69,16 +69,20 @@ function RadiusOfGyration(network_,dim)
     RadiusOfGyration=sqrt(mean(fraction_list))
     return RadiusOfGyration
 end
-# probability=[0.5, 0.55,0.59]
+probability=[0.5, 0.55,0.59]
 SavedData_xi=[]
 SavedData_S=[]
-xi=[]
-S_list=[]
-for run_num in 1:100
-    network_,S=operation(dim,0.59)
-    push!(S_list,S)
-    push!(xi,RadiusOfGyration(network_,dim))
+
+for p in probability
+    xi=[]
+    S_list=[]
+    for run_num in 1:5000
+        network_,S=operation(dim,p)
+        push!(S_list,S)
+        push!(xi,RadiusOfGyration(network_,dim))
+    end
+    push!(SavedData_xi, xi)
+    push!(SavedData_S, S_list)
 end
-push!(SavedData_xi, xi)
-push!(SavedData_S, S_list)
 save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld","data_xi", SavedData_xi, "data_S", SavedData_S)
+load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld")
