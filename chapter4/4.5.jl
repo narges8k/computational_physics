@@ -127,7 +127,7 @@ for i in 1:5
 end
 scatter!(xlabel="P", ylabel=L"\xi", title=L"\xi\_ P")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_plot.png")
-#scatter plot including error bars
+#scatter plot including error bars:
 plot(dpi=400)
 for i in 1:5
     dim=dim_list[i]
@@ -141,10 +141,13 @@ savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\
 xdata=[]
 ydata=dim_list
 for i in 1:5
-    Pc_L= probability[findall(x->x==maximum(SavedData_mean[i]),SavedData_mean[i])]
+    Pc_L= probability[findall(x->x==maximum(SavedData_mean[i]),SavedData_mean[i])[1]]
     push!(xdata, Pc_L)
 
 end
+println(xdata)
+println(ydata)
 @.model(x,p)=abs(x-p[1])^(-p[2])
 p0=[1.3, 0.59]
 fit=curve_fit(model, xdata, ydata, p0)
+#nu-->0.61 , Pc(∞)-->1.02
