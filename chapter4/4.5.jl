@@ -117,7 +117,7 @@ save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5
 
 #creating the figures:
 load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.5\\L=160_ClusterGrowth.jld")
-#plot withough error bars
+#plot withough error bars:
 plot(dpi=400)
 for i in 1:5
     dim=dim_list[i]
@@ -137,7 +137,7 @@ for i in 1:5
 end
 scatter!(xlabel="P", ylabel=L"\xi", title=L"\xi\_ P")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.5_scatter.png")
-#getting Pc(L):
+#getting Pc(∞) and ν:
 xdata=[]
 ydata=dim_list
 for i in 1:5
@@ -150,4 +150,4 @@ println(ydata)
 @.model(x,p)=abs(x-p[1])^(-p[2])
 p0=[1.3, 0.59]
 fit=curve_fit(model, xdata, ydata, p0)
-#nu-->0.61 , Pc(∞)-->1.02
+#result: ν-->0.61 , Pc(∞)-->1.02
