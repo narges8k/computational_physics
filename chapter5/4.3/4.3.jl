@@ -1,4 +1,4 @@
-using Plots, LaTeXStrings, JLD, Statistics
+using Plots, LaTeXStrings, JLD, Statistics,Gadfly
 function RandomWalk(p,first_step)
     arr=[first_step]
     PosPerTime=[first_step]
@@ -16,8 +16,7 @@ function RandomWalk(p,first_step)
     end
     return PosPerTime
 end
-PosPerTime=RandomWalk(0.5,-1)
-#probability=[0.5]#,0.5,0.75,0.95
+# PosPerTime=RandomWalk(0.5,-1)
 run_num=100000
 StartingPosList=[i for i in -10:10]
 AvgSteps=[]
@@ -29,10 +28,14 @@ for first_step in StartingPosList
     end
     push!(AvgSteps, mean(steps))
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\chapter5_4.3_AvgSteps.jld",
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\chapter5_4.3_AvgSteps_p=0.5.jld",
  "data", AvgSteps)
 scatter(StartingPosList, AvgSteps,legends=false, color=:black, alpha=0.5)
 plot!(StartingPosList, AvgSteps,guidefontsize=9, color=:mediumpurple3,
 legends=false, ylabel="Average Steps Before Reaching the Boundaries", xlabel="the Starting Position",
 title="Dependance of the Random Walker's Average Lifetime to It's Starting Position",titlefontsize=9)
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\Figs\\avgstep_startpos.png")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\Figs\\avgstep_startpos_p=0.5.png")
+# #plot!(x=StartingPosList[1:end], y=AvgSteps[1:end],guidefontsize=9, color=:mediumpurple3,
+# Geom.point, Geom.smooth(method=:loess,smoothing=0.9),
+# legends=false, ylabel="Average Steps Before Reaching the Boundaries", xlabel="the Starting Position",
+# title="Dependance of the Random Walker's Average Lifetime to It's Starting Position",titlefontsize=9)
