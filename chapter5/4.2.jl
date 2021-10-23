@@ -15,7 +15,7 @@ function RandomWalk(TotalTime, probability)
     return cumsum(arr,dims=1)
 end
 run_num=100
-RandomWlakers=[[] for i in 1:length(probability)]
+RandomWalkers=[[] for i in 1:length(probability)]
 for n in 1:run_num
     position_per_TimeStep_matrix=RandomWalk(TotalTime, probability)
 
