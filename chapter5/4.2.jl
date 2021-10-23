@@ -1,5 +1,5 @@
 using Plots, LaTeXStrings, JLD, Statistics
-TotalTime=1000
+TotalTime=100
 probability=[0.25,0.5,0.75,0.95]
 function RandomWalk(TotalTime, probability)
     arr=zeros((TotalTime,length(probability)))
@@ -29,6 +29,7 @@ for n in 1:run_num
     end
 end
 SavedData_mean=[[] for i in 1:length(probability)]
+SavedData_std=[[] for i in 1:length(probability)]
 for i in 1:length(RandomWalkers)
     for j in RandomWalkers[i]
         push!(SavedData_std[i],std(j))
@@ -39,13 +40,17 @@ save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.2
  "MeanData", SavedData_mean, "StdData", SavedData_std)
  #plots:
 load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.2\\chapter5_4.2_MeanAndStdData.jld")
+scatter()
 for i in 1:length(probability)
     p=probability[i]
-    scatter!(1:TotalTime, SavedData_mean[i],title="<x> per time for different probabilities", xlabel="t", ylabel="<x>",label=L"%$p")
+    scatter!(1:TotalTime, SavedData_mean[i],label=L"%$p")
 end
+scatter!(title="<x> per time for different probabilities", xlabel="t", ylabel="<x>")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.2\\Figs\\MeanPlot.png")
+scatter()
 for i in 1:length(probability)
     p=probability[i]
-    scatter!(1:TotalTime, SavedData_std[i],title="Var[x] per time  for different probabilities", xlabel="t", ylabel="<x>",label=L"%$p")
+    scatter!(1:TotalTime, SavedData_std[i],label=L"%$p")
 end
+scatter!(title="Var[x] per time  for different probabilities", xlabel="t", ylabel="<x>")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.2\\Figs\\VarPlot.png")
