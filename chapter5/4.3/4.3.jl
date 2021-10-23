@@ -1,30 +1,37 @@
 using Plots, LaTeXStrings, JLD, Statistics
-TotalTime=20
-probability=[0.25,0.5,0.75,0.95]
-function RandomWalk(TotalTime, probability)
-    arr=zeros((TotalTime,length(probability)))
-    #starting at random postions:
-    for i in 1:length(probability)
-        arr[1, i]=rand(1:10)
-    end
-    #filling the other entries with 1 and -1 with the given probabilities:
-    for j in 1:length(probability)
-        for i in 2:TotalTime
-            if probability[j]>rand()
-                arr[i,j]=1
-            else
-                arr[i,j]=-1
-            end
+function RandomWalk(p,first_step)
+    arr=[first_step]
+    PosPerTime=[first_step]
+    #condition=true
+    while true
+        if p>rand()
+            push!(arr, 1)
+        else
+            push!(arr, -1)
+        end
+        PosPerTime=cumsum(arr,dims=1)
+        if (10 ∈ PosPerTime) || (-10 ∈ PosPerTime)
+            break
         end
     end
-    PosPerTime=cumsum(arr,dims=1)
-    #stoping the random walker when reachin the boundaries(-10 or 10):
-    for cartesianIndex in findall(x->x>10, PosPerTime)
-            PosPerTime[cartesianIndex[1], cartesianIndex[2]]=10
-    end
-    for cartesianIndex in findall(x->x<-10, PosPerTime)
-            PosPerTime[cartesianIndex[1], cartesianIndex[2]]=-10
-    end
-    return PosPerTime
+    return PosPerTime,arr
 end
-TheMatrix=RandomWalk(TotalTime, probability)
+PosPerTime,arr=RandomWalk(0.5,-1)
+findall(x->x==10, PosPerTime)
+#probability=[0.5]#,0.5,0.75,0.95
+run_num=10
+StartingPosList=[i for i in -10:10]
+AvgSteps=[]
+for first_step in StartingPosList
+    # println("first_step:", first_step)
+    steps=[]
+    for n in 1:run_num
+        println("run_num:",n, "first_step:", first_step)
+        PosPerTime=RandomWalk(0.5,first_step)
+        push!(steps, length(PosPerTime))
+    end
+    push!(AvgSteps, mean(steps))
+end
+
+
+scatter!(StartingPosList, AvgSteps)
