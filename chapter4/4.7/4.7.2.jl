@@ -1,5 +1,5 @@
 using Plots,Statistics, LaTeXStrings,JLD
-dim=10
+dim=200
 function neighbor_checking(network_,dim,i,j)
     neighbors_list=[]
     if i+1!=dim+1
@@ -84,22 +84,18 @@ for p in probability
     push!(SavedData_xi, xi)
     push!(SavedData_S, S_list)
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld",
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_S_xi.jld",
 "data_xi",SavedData_xi,
 "data_S", SavedData_S)
 #plots:
-load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld")
-plot()
+load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_S_xi.jld")
+xdata=[]
+ydata=[]
 for i in 1:3
-    p=probability[i]
-    histogram!(SavedData_xi[i], bins=50,label=L"%$p")
+    push!(ydata,log(mean(SavedData_S[i])))
+    push!(xdata,log(mean(SavedData_xi[i])))
 end
-plot!(xlabel=L"\xi", ylabel="Numbers")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_xi_histogram.png")
-plot()
-for i in 1:3
-    p=probability[i]
-    histogram!(SavedData_S[i], bins=50,label=L"%$p")
-end
-plot!(xlabel="\S", ylabel="Numbers")
-savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_S_histogram.png")
+scatter(xdata, ydata,color=:orange, legend=false, dpi=400,
+ xlabel=L"Log\ (\xi)", ylabel=L"log\ (S)",title=L"log\ (S) \_ Log\ (\xi)")
+plot!(xdata, ydata,legend=false, dpi=400)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_log(s)_log(xi).png")
