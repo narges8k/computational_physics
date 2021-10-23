@@ -14,24 +14,25 @@ function RandomWalk(p,first_step)
             break
         end
     end
-    return PosPerTime,arr
+    return PosPerTime
 end
-PosPerTime,arr=RandomWalk(0.5,-1)
-findall(x->x==10, PosPerTime)
+PosPerTime=RandomWalk(0.5,-1)
 #probability=[0.5]#,0.5,0.75,0.95
-run_num=10
+run_num=100000
 StartingPosList=[i for i in -10:10]
 AvgSteps=[]
 for first_step in StartingPosList
-    # println("first_step:", first_step)
     steps=[]
     for n in 1:run_num
-        println("run_num:",n, "first_step:", first_step)
         PosPerTime=RandomWalk(0.5,first_step)
         push!(steps, length(PosPerTime))
     end
     push!(AvgSteps, mean(steps))
 end
-
-
-scatter!(StartingPosList, AvgSteps)
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\chapter5_4.3_AvgSteps.jld",
+ "data", AvgSteps)
+scatter(StartingPosList, AvgSteps,legends=false, color=:black, alpha=0.5)
+plot!(StartingPosList, AvgSteps,guidefontsize=9, color=:mediumpurple3,
+legends=false, ylabel="Average Steps Before Reaching the Boundaries", xlabel="the Starting Position",
+title="Dependance of the Random Walker's Average Lifetime to It's Starting Position",titlefontsize=9)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\Figs\\avgstep_startpos.png")
