@@ -76,7 +76,7 @@ SavedData_S=[]
 for p in probability
     xi=[]
     S_list=[]
-    for run_num in 1:5000
+    for run_num in 1:100
         network_,S=operation(dim,p)
         push!(S_list,S)
         push!(xi,RadiusOfGyration(network_,dim))
@@ -84,5 +84,22 @@ for p in probability
     push!(SavedData_xi, xi)
     push!(SavedData_S, S_list)
 end
-save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld","data_xi", SavedData_xi, "data_S", SavedData_S)
+save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld",
+"data_xi",SavedData_xi,
+"data_S", SavedData_S)
+#plots:
 load("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\4.7\\ClusterGrowth_p=0.59_xi.jld")
+plot()
+for i in 1:3
+    p=probability[i]
+    histogram!(SavedData_xi[i], bins=50,label=L"%$p")
+end
+plot!(xlabel=L"\xi", ylabel="Numbers")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_xi_histogram.png")
+plot()
+for i in 1:3
+    p=probability[i]
+    histogram!(SavedData_S[i], bins=50,label=L"%$p")
+end
+plot!(xlabel="\S", ylabel="Numbers")
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_S_histogram.png")
