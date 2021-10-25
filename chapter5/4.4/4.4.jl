@@ -1,20 +1,22 @@
-p=1/2
-q=1-p
-TotData=[[1.0]]
 
-step_=2
-while step_<10
-    R=[TotData[step_-1][1]*q] #first element
-    for i in 2:(2*step_-2)
-        println(i)
-        if i%2==0
-            push!(R,0.0)
-        else
-            push!(R, TotData[step_-1][i]*q+TotData[step_-1][i-2]*p)
-        end
+starting_position=7; L=20
+TotData=[[0.0 for i in 1:L]]
+TotData[1][starting_position]=1
+step=2
+death_p_sum=0
+while true
+    R=[0.0 for e in 1:L]
+    for i in 2:(L-1)
+        R[i-1:2:i+1].+=TotData[step-1][i]/2
     end
-    push!(R,TotData[step_-1][end]*p) #last element
-    push!(TotData,R)
-    step_+=1
+    R[1]+=TotData[step-1][1]
+    R[end]+=TotData[step-1][end]
+    push!(TotData, R)
+    step+=1
+    death_p_sum+=R[1]
+    death_p_sum+=R[end]
+    if death_p_sum>=0.99
+        break
+    end
+    println(R)
 end
-TotData
