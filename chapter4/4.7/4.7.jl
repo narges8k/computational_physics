@@ -23,8 +23,8 @@ function on_or_blocked(network_,dim,i,j,p)
     end
     return network_
 end
-p=0.7
-dim=5
+p=0.55
+dim=50
 network_=zeros(Int,dim,dim)
 network_[rand(1:dim),rand(1:dim)]=1 #the first entry
 for step in 1:(dim^2)
@@ -44,3 +44,5 @@ for step in 1:(dim^2)
         break
     end
 end
+heatmap(network_)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter4\\Fig\\4.7_p=0.5.png")
