@@ -30,10 +30,11 @@ for first_step in StartingPosList
 end
 save("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\chapter5_4.3_AvgSteps_p=0.5.jld",
  "data", AvgSteps)
-scatter(StartingPosList, AvgSteps,legends=false, color=:black, alpha=0.5)
+scatter(StartingPosList, AvgSteps,legends=false, color=:black, alpha=0.5, dpi=400)
 plot!(StartingPosList, AvgSteps,guidefontsize=9, color=:mediumpurple3,
-legends=false, ylabel="Average Steps Before Reaching the Boundaries", xlabel="the Starting Position",
-title="Dependance of the Random Walker's Average Lifetime to It's Starting Position",titlefontsize=9)
+    legends=false, ylabel="Average Steps Before Reaching the Boundaries", xlabel="the Starting Position",
+    title="Dependance of the Random Walker's Average Lifetime to It's Starting Position",titlefontsize=9)
+
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.3\\Figs\\avgstep_startpos_p=0.5.png")
 # #plot!(x=StartingPosList[1:end], y=AvgSteps[1:end],guidefontsize=9, color=:mediumpurple3,
 # Geom.point, Geom.smooth(method=:loess,smoothing=0.9),
