@@ -24,7 +24,8 @@ function RandomWalk(arr, L, direction_list,first_pos)
         if path[end][1]>(first_pos[1]+5) # if going out of the second boundary, neglect the particle
             return 0 #ZONE OUT
             break
-        elseif length(findall(x->x ∉ -3:0,vcat(arr[path[end][1]-1:2:path[end][1]+1,path[end][2]],arr[path[end][1],path[end][2]-1:2:path[end][2]+1]]...))>0
+        elseif length(findall(x->x ∉ -3:0,vcat(arr[path[end][1]-1:2:path[end][1]+1,path[end][2]],
+                        arr[path[end][1],path[end][2]-1:2:path[end][2]+1]...)))>0
             arr[path[end][1], path[end][2]]-=1
             return path[end] #SUSCCESSFUL COLLISION, returning the final_destination
             break
@@ -32,7 +33,7 @@ function RandomWalk(arr, L, direction_list,first_pos)
     end
 end
 
-direction_list=[[0,1],[0,-1],[1,0],[-1,0],[-1,1],[1,-1],[1,1],[-1,-1]]
+direction_list=[[0,1],[0,-1],[1,0],[-1,0]]
 L=20
 arr=zeros((L,L))
 N=10
