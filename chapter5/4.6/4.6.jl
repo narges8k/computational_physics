@@ -1,10 +1,10 @@
 using Plots, Statistics, JLD
-function BoundaryCondition(i,L)
-    if i[2]==L
-        i[2]=1
+function Boundary(i,L)
+    if i==L
+        i=1
         return i
-    elseif i[2]==1
-        i[2]=L
+    elseif i==1
+        i=L
         return i
     else
         return i
@@ -32,7 +32,8 @@ function RandomWalk(arr, L, direction_list,first_pos)
     while true
         push!(direction_choosing, rand(direction_list))
         path=cumsum(direction_choosing,dims=1)
-        current_pos=BoundaryCondition(path[end],L)
+        i=Boundary(path[end][2],L)
+        current_pos=[path[end][1],path[end][2]]
         println(path)
         if current_pos[1]>(first_pos[1]+5) # if going out of the second boundary, neglect the particle
             return 0 #ZONE OUT
@@ -41,7 +42,7 @@ function RandomWalk(arr, L, direction_list,first_pos)
             return current_pos
             break
         elseif length(findall(x->x ∉ -3:0,vcat(arr[current_pos[1]-1:2:current_pos[1]+1,current_pos[2]],
-                        arr[current_pos[1],current_pos[2]-1:2:current_pos[2]+1]...)))>0
+                        arr[current_pos[1],Boundary(current_pos[2]-1,L):2:Boundary(current_pos[2]+1,L)]...)))>0
             arr[current_pos[1], current_pos[2]]-=1
              return current_pos #SUSCCESSFUL COLLISION, returning the final_destination
              break
