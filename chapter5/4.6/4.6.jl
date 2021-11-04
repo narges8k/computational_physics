@@ -1,4 +1,15 @@
 using Plots, Statistics, JLD
+function BoundaryCondition(i,L)
+    if i[2]==L
+        i[2]=1
+        return i
+    elseif i[2]==1
+        i[2]=L
+        return i
+    else
+        return i
+    end
+end
 function height_cal(arr)
     h=[]
     for col in eachcol(arr)
@@ -13,6 +24,7 @@ function height_cal(arr)
     return maximum(h)
 end
 
+
 function RandomWalk(arr, L, direction_list,first_pos)
     number_of_steps=rand()
     direction_choosing=[first_pos]
@@ -20,15 +32,19 @@ function RandomWalk(arr, L, direction_list,first_pos)
     while true
         push!(direction_choosing, rand(direction_list))
         path=cumsum(direction_choosing,dims=1)
+        current_pos=BoundaryCondition(path[end],L)
         println(path)
-        if path[end][1]>(first_pos[1]+5) # if going out of the second boundary, neglect the particle
+        if current_pos[1]>(first_pos[1]+5) # if going out of the second boundary, neglect the particle
             return 0 #ZONE OUT
             break
-        elseif length(findall(x->x ∉ -3:0,vcat(arr[path[end][1]-1:2:path[end][1]+1,path[end][2]],
-                        arr[path[end][1],path[end][2]-1:2:path[end][2]+1]...)))>0
-            arr[path[end][1], path[end][2]]-=1
-            return path[end] #SUSCCESSFUL COLLISION, returning the final_destination
+        elseif current_pos[1]==1
+            return current_pos
             break
+        elseif length(findall(x->x ∉ -3:0,vcat(arr[current_pos[1]-1:2:current_pos[1]+1,current_pos[2]],
+                        arr[current_pos[1],current_pos[2]-1:2:current_pos[2]+1]...)))>0
+            arr[current_pos[1], current_pos[2]]-=1
+             return current_pos #SUSCCESSFUL COLLISION, returning the final_destination
+             break
         end
     end
 end
@@ -39,8 +55,10 @@ arr=zeros((L,L))
 N=10
 color=1
 for particle in 1:N
+    println("particle:", particle)
     peak=height_cal(arr)
     f_d=RandomWalk(arr, L, direction_list,[peak+3, rand(1:L)])
+    println("the final position:", f_d)
     if arr[f_d[1],f_d[2]]==-3
         arr[f_d[1],f_d[2]]=color
     end
