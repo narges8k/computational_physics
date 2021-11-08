@@ -1,11 +1,9 @@
-using Plots, Statistics, JLD
+using Plots, Statistics, JLD, LaTeXStrings
 function Boundary(i,L)
-    if i==L || i==L+1
-        i=1
-        return i
-    elseif i==1 || i==0
-        i=L
-        return i
+    if i[2]>L
+        return i[i[1],i[2]-L]
+    elseif i[2]<1
+        return i[i[1],L+i[2]]
     else
         return i
     end
@@ -24,51 +22,22 @@ function height_cal(arr)
     return maximum(h)
 end
 
-
-function RandomWalk(arr, L, direction_list,first_pos)
-    number_of_steps=rand()
-    direction_choosing=[first_pos]
-    path=[first_pos]
-    while true
-        push!(direction_choosing, rand(direction_list))
-        path=cumsum(direction_choosing,dims=1)
-        i=Boundary(path[end][2],L)
-        println(i)
-        current_pos=[path[end][1],i]
-        println(current_pos)
-        if current_pos[1]>(first_pos[1]+5) # if going out of the second boundary, neglect the particle
-            println(path)
-            return 0 #ZONE OUT
-            break
-        elseif current_pos[1]==1
-            return current_pos
-            break
-        elseif length(findall(x->x ∉ -3:0,vcat(arr[current_pos[1]-1:2:current_pos[1]+1,current_pos[2]],
-                        arr[current_pos[1],Boundary(current_pos[2]-1,L):2:Boundary(current_pos[2]+1,L)]...)))>0
-            arr[current_pos[1], current_pos[2]]-=1
-            println(path)
-             return arr,current_pos #SUSCCESSFUL COLLISION, returning the final_destination
-             break
-        end
-    end
+function Collision(Network_, L, Pos)
 end
 
-direction_list=[[0,1],[0,-1],[1,0],[-1,0]]
-L=20
-arr=zeros((L,L))
-N=10
-color=1
-for particle in 1:N
-    println("particle:", particle)
-    peak=height_cal(arr)
-    arr,f_d=RandomWalk(arr, L, direction_list,[peak+3, rand(1:L)])
-    println("the final position:", f_d)
-    if f_d==0
-        continue
-    elseif arr[f_d[1],f_d[2]]==-3
-        arr[f_d[1],f_d[2]]=color
-    end
-    if particle%(10*200*color)==0
-        color+=1
+function RandomWalk(Network_, L, FirstPos, DirectionList, seperation)
+    NextPos=First_pos
+    while true
+        CurrentPos .+=rand(DirectionList)
+        CurrentPos=Boundary(NextPos,L)
+        if CurrentPos[1]> (FirstPos[1]+seperation)
+            return 0
+        elseif CurrentPos[1]==1
+            return CurrentPos
+        elseif Collision(Network_, L, CurrentPos)==true
+            return CurrentPos
+        else
+            continue
+        end
     end
 end
