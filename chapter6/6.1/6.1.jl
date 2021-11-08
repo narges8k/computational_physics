@@ -20,4 +20,3 @@ p4=histogram(final_res[4], bins=15, alpha=0.5, xlabel="The Random Number", ylabe
 p5=histogram(final_res[5], bins=15, alpha=0.5, xlabel="The Random Number", ylabel="Number",c = :orange,label="N=1000000")
 plot(p1,p2,p3,p4,p5, layout=5,dpi=600,guidefontsize=9, legendfont=6, legend = :outertop)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter6\\6.1\\Figs\\TheFrequencyCruve.png")
-plot(STDList, NList)
