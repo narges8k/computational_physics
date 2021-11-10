@@ -47,13 +47,11 @@ function RandomWalk(Network_, L, FirstPos, t_limit, DirectionList)
                         Network_[CurrentPos...] =-1
                         return Network_, CurrentPos
                     end
-                elseif Network_[CurrentPos .+ neighbor...] > 0
+                elseif Network_[(CurrentPos .+ neighbor)...] > 0
                     Network_[CurrentPos...]=-1
                     return Network_, CurrentPos
                 end
             end
-        else
-            return Network_,CurrentPos
         end
     end
 end
@@ -76,10 +74,9 @@ for particle in ProgressBar(1:N)
         if particle%(10*L*color)==0
             color+=1
         end
-    else
-        break
     end
 end
+Network_
 Network_[findall(x->x<0, Network_)].=0
 heatmap(Network_, dpi=400)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter5\\4.6\\Figs\\4.6_strange.png")
