@@ -35,12 +35,22 @@ function RandomWalk(Network_, L, FirstPos, t_limit, DirectionList)
                 return Network_, CurrentPos
             elseif CurrentPos[1]> t_limit
                 return Network_, 0
-            elseif length(findall(x->x>0,vcat(Network_[CurrentPos[1]-1:2:CurrentPos[1]+1,CurrentPos[2]],
-                            Network_[CurrentPos[1], Boundary(CurrentPos[2]-1,L):2:Boundary(CurrentPos[2]+1,L)]...)))>0
-                    Network_[CurrentPos...]-=1
-                return Network_,CurrentPos
-            else
-                continue
+            end
+            for neighbor in DirectionList
+                if neighbor[2]+CurrentPos[2]==0
+                    if Network_[neighbor[1]+CurrentPos[1], L] > 0
+                        Network_[CurrentPos...] =-1
+                        return Network_, CurrentPos
+                    end
+                elseif neighbor[2]+CurrentPos[2]==L+1
+                    if Network_[neighbor[1]+CurrentPos[1], 1] > 0
+                        Network_[CurrentPos...] =-1
+                        return Network_, CurrentPos
+                    end
+                elseif Network_[CurrentPos .+ neighbor...] > 0
+                    Network_[CurrentPos...]=-1
+                    return Network_, CurrentPos
+                end
             end
         else
             return Network_,CurrentPos
