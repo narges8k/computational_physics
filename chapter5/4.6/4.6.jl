@@ -24,7 +24,6 @@ end
 
 function RandomWalk(Network_, L, FirstPos, t_limit, DirectionList)
     CurrentPos=FirstPos
-    #println("firstPos:", FirstPos)
     while true
         temp=CurrentPos .+ rand(DirectionList)
         temp= [temp[1],Boundary(temp[2],L)]
@@ -56,9 +55,9 @@ function RandomWalk(Network_, L, FirstPos, t_limit, DirectionList)
     end
 end
 direction_list=[[0,1],[0,-1],[1,0],[-1,0]]
-L=200
+L=20
 Network_=zeros(Int,L,L)
-N=80000
+N=800
 color=1
 seperation=5
 for particle in ProgressBar(1:N)
