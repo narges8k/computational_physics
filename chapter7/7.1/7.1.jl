@@ -11,10 +11,10 @@ function IMC(f :: Function, a :: Real, b :: Real, g₍ₓ₎ :: Function, y :: F
     NewD= (f₍ₓ₎/g₍ₓ₎).(y.rand(N))
     ∫g₍ₓ₎dx= 1-ℯ^2
     ∫f₍ₓ₎dx= ∫g₍ₓ₎dx * mean(NewD)
-    error= std(NewD)/sqrt(N)
+    error= ∫g₍ₓ₎dx * std(NewD)/sqrt(N)
     return ∫f₍ₓ₎dx, error
 
 end
 
 SMC(x->ℯ^(-x^2), 0, 2, 10^6)
-IMC(x->ℯ^(-x^2), 0, 2, x -> ℯ^(-x), x -> -log(1-x) , 10^6)
+IMC(x->ℯ^(-x^2), 0, 2, x -> ℯ^(-x), x -> -log(1-(1-ℯ^2)*x), 10^6)
