@@ -1,7 +1,7 @@
 using Plots, LaTeXStrings, Statistics,  Distributions,StatsPlots, JLD
 
-N=1000
-σList=[0.5, 1, 5, 10, 20 ]
+N=1000000
+σList=[1, 2, 3, 4, 5  ]
 function GaussianD(σ, UniformD)
     x1=rand(UniformD, round(Int,N/2))
     x2=rand(UniformD, round(Int,N/2))
@@ -13,14 +13,12 @@ function GaussianD(σ, UniformD)
 end
 Data=[GaussianD(σList[i], rand(N)) for i in 1:5]
 save("../../chapter6/6.4/samples.jld","Samples", Data)
-plots=[]
-colors=[:silver, :turquoise,:pink2,:mediumpurple3, :darkgoldenrod1]
+colors=[:rosybrown, :turquoise,:khaki1,:lightblue1, :lightpink2]
+plot()
 for i in 1:length(σList)
-    plt=begin
-        histogram(Data[i],color=colors[i],normalize = true, label=L"Histogram\ of\ Samples", alpha=0.9)
-        plot!(Normal(mean(Data[i]),std(Data[i])), c = :black, label= L"Normal(\mu = %$(round(mean(Data[i]),digits = 2)), \sigma = %$(round(std(Data[i]),digits = 2)))")
-    end
-    push!(plots, plt)
+        histogram!(Data[i],bins=70,linecolor=:gray, color=colors[i],normalize = true, label=L"Histogram\ of\ Samples")
+        plot!(Normal(mean(Data[i]),std(Data[i])), c = :black, label= L"\sigma = %$(round(std(Data[i]),digits = 2)))")
 end
-plot(plots..., size = (1000,1000), plot_title = "Normalized Distribution of Samples", dpi=600)
+plot!(xlabel=L"",title=L"Normalized\ Distribution\ of\ Samples")
+# plot(plots..., size = (1000,1000), plot_title = "Normalized Distribution of Samples", dpi=600)
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter6\\6.4\\Figs\\N_Distribution.png")
