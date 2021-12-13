@@ -5,7 +5,7 @@ dim=4
 β=range(0.1,0.9, 80)
 System=rand([-1,1], dim, dim) 
 
-function FindEnergy(ُSystem::Matrix{Int8}, dim::Integer)
+function FindEnergy(System::Matrix{Int8}, dim::Integer)
     E = 0.0
     for i ∈ 1:dim
         for j ∈ 1:dim
@@ -17,7 +17,8 @@ function FindEnergy(ُSystem::Matrix{Int8}, dim::Integer)
 end
 
 function DE(System::Matrix{Int8}, i::Integer, j::Integer)
-    return system[i,j]*(System[i-1,j]+System[i,j-1]+System[i,j+1], System[i+1,j])
+    Neighbors = [[1 + i % dim, j], [i, 1 + j % dim], [(-2 + i + dim) % dim + 1, j], [i, (-2 + j + dim) % dim + 1]]
+    return system[i,j]*sum(System[CartesianIndex.(Tuple.(Neighbors))])
 end
 
 function MC(System::Matrix{Int8}, dim::Integer, N::Integer, β::Real)
@@ -43,7 +44,7 @@ function Initial_System(System::Matrix{Int8},dim::Integer)
         i=rand(1:dim);j=rand(1:dim)
         ΔE= DE(i,j)
         if ΔE<=0 || rand()<exp(-ΔE*β)
-            System[i,j]= -System[i,j]
+            System[i,j] *= -1
         end
     end
     return System
