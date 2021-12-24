@@ -74,3 +74,27 @@ plot(β_list, M_list)
 plot(β_list, C_list)
 
 plot(β_list, χ_list)
+
+E_Data = []
+M_Data = []
+C_Data = []
+χ_Data = []
+
+for l in 3:12
+    E_list = []
+    M_list = []
+    C_list = []
+    χ_list = []
+
+    for β in β_list
+        E, M, C, χ = ising2d(dim, β, 1000, 100)
+        push!(E_list, E)
+        push!(M_list, M)
+        push!(C_list, C)
+        push!(χ_list, χ)
+    end
+    push!(E_Data, E_list)
+    push!(M_Data, M_list)
+    push!(C_Data, C_list)
+    push!(χ_Data, χ_list)
+end
