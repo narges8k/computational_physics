@@ -1,16 +1,16 @@
 using LaTeXStrings, Plots, ProgressBars, Statistics, StatsBase
-function f(x)
-    return -x
-end
+#First Order Differential Equation
+#RC
+function EulerSolving(func::Function, xᵢₙᵢₜ::Float64, tᵢₙᵢₜ::Float64, tₛ::Float64, h::Float64=0.01)
+    tₐₗₗ=collect(range(tᵢₙᵢₜ, tₛ, step=h))
+    Q=zeros(length(tₐₗₗ))
+    Q[1]=xᵢₙᵢₜ
 
-function euler(τ, xᵢₙᵢₜ, h)
-    count=length(collect(range(0, τ, step=h)))
-    x=zeros(count)
-    x[0]=xᵢₙᵢₜ
-    for n in 1:count
-        x[n+1]=x[n]+ f(x[n])*h
+    x=xᵢₙᵢₜ
+    for (i,t) in enumerate(tₐₗₗ[1:end])
+        x += func(t,x)*h
+        Q[i+1] = x
     end
-return x, count
-
-
-
+    return tₐₗₗ, Q
+end
+##Plots
