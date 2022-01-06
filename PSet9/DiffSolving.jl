@@ -40,7 +40,7 @@ function EulerCromer(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Floa
     x[1]= xᵢₙᵢₜ
     for i in 1:length(t)-1
         v[i+1] = v[i] + h * func(t[i], x[i])
-        x[i+1] = x[i] + h * v[i]
+        x[i+1] = x[i] + h * v[i+1]
     end
     
     return t, x, v
