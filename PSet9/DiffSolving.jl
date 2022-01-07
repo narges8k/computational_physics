@@ -31,7 +31,7 @@ end
 
 #Second Order ODE
 #Simple Harmonic Oscillator
-xᵢₙᵢₜ , vᵢₙᵢₜ= 1.0, 0.0; step=0.1;  n=2; tₘᵢₙ=0.0; tₘₐₓ=round(2π * n); h=0.5
+
 function EulerCromer(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Float64, tₘᵢₙ::Float64, tₘₐₓ::Float64, h::Float64)
     t=collect(range(tₘᵢₙ, tₘₐₓ, step=h))
     x=zeros(length(t))
@@ -46,8 +46,8 @@ function EulerCromer(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Floa
     
     return t, x, v
 end
-t_EC, x_EC, v_EC = DiffSolving.EulerCromer((t,x)-> -x, 0.0, 1.0, tₘᵢₙ, tₘₐₓ, h)
-xᵢₙᵢₜ , vᵢₙᵢₜ= 1.0, 0.0; step=0.1;  n=2; tₘᵢₙ=0.0; tₘₐₓ=round(2π * n); h=0.5
+
+
 function Verlet(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Float64, tₘᵢₙ::Float64, tₘₐₓ::Float64, h::Float64)
     t=collect(range(tₘᵢₙ, tₘₐₓ, step=h))
     x=zeros(length(t))
@@ -63,7 +63,6 @@ function Verlet(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Float64, 
     end
     return t, x, v
 end
-t_V, x_V, v_V = DiffSolving.Verlet((t,x)-> -x, 0.0, 1.0, tₘᵢₙ, tₘₐₓ, h)
 
 function VelocityVerlet(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::Float64, tₘᵢₙ::Float64, tₘₐₓ::Float64, h::Float64)
     t= collect(range(tₘᵢₙ, tₘₐₓ, step=h))
@@ -73,9 +72,9 @@ function VelocityVerlet(func::Function, xᵢₙᵢₜ::Float64, vᵢₙᵢₜ::F
     v[1]= vᵢₙᵢₜ
     x[1]= xᵢₙᵢₜ
 
-    for i in 2:length(t)-1
-        x[i+1] = x[i] + v[i] * h + 1/2 * func(t[i], x[i]) * h^2
-        v[i+1] = v[i] + 1/2 * (func(t[i], x[i]) + func(t[i+1], x[i+1])) * h
+    for i in 1:length(t)-1
+        x[i+1] = x[i] + v[i] * h + func(t[i], x[i]) * h^2 * 1/2
+        v[i+1] = v[i] + (func(t[i], x[i]) + func(t[i+1], x[i+1])) * h * 1/2
     end
     
     return t, x, v
