@@ -2,7 +2,7 @@ module MD
 using LaTeXStrings, Plots, Statistics 
 #mutable struct -> instances of the composite types can be modified.
 mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared abstract type is a subtype of this "parent" type. 
-    Δt ::FT; L :: FT; U :: FT; K :: FT; T :: FT; P :: FT
+    step ::FT; L :: FT; U :: FT; K :: FT; T :: FT; P :: FT
     N :: Integer
     r:: Matrix{FT}; v :: Matrix{FT}; F :: Matrix{FT}
 
@@ -12,13 +12,37 @@ mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared 
         v .-= mean(v, dims = 2) # This way the COM's velocity becomes zero -> Temperature is no longer dependent on velocity
         v *= sqrt(2*T₀ / mean(v .^ 2))
         F = Matrix{FT}(undef, 2, N)
-        return 
+        return new{DT}(l, h, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, f, r, v)
     end
-
-end
 
 function initialize(md :: MDSystem)
 
 end
 
-function Force()
+function force_cal(md :: MDStystem, i :: Integer)
+    for j in 1:md.N
+        Δx = md.r[1, i] - md.r[1, j]
+        Δy = md.r[2, i] - md.r[2, j]
+        if Δx < -md.L / 2 
+            md.r[1, j] += md.L
+        elseif Δy < -md.L / 2
+            md.r[2, j] -= md.L
+        elseif Δx > md.L / 2
+            md.r[1, j] += md.L
+        elseif Δy > md.L / 2
+            md.r[2, j] -= md.L
+        end
+        Δr = sqrt(sum(md.r[:, i] - md.r[:, j]) .^ 2)
+        md.f[:, i] += 48 * (((Δr)^-14) - 0.5 * ((Δr)^-8)) * (md.r[:, i] - md.r[:, j])
+    end
+end
+
+function VelVerlet(md :: MDSystem)
+    for i in 1:md.N
+        a₁ = md.f[:, i]
+        md.r[:, i] += md.step * (md.v[:, i] + md.step / 2 * a₁)
+        force_cal(md, i)
+        a₂ = md.f[:, i]
+        md.v[:, i] += md.step / 2 * (a₁ + a₂)
+    end
+end
