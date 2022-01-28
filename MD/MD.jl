@@ -14,9 +14,20 @@ mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared 
         F = Matrix{FT}(undef, 2, N)
         return new{DT}(l, h, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, f, r, v)
     end
-
+end
 function initialize(md :: MDSystem)
 
+end
+
+function alignleft!(md::MDSystem) 
+    xcount = ceil(Integer, (2 * md.N)^(1 / 2) / 2)
+    ycount = 2 * xcount
+
+    xs = collect(range(0.1 * md.l / 2, 0.9 * md.l / 2, length = xcount))
+    md.r[1, :] .= repeat(xs, outer = ycount)[1:md.N]
+
+    ys = collect(range(0.1 * md.l, 0.9 * md.l, length = ycount))
+    md.r[2, :] .= repeat(ys, inner = xcount, outer = 1)[1:md.N]
 end
 
 function force_cal(md :: MDStystem, i :: Integer)
@@ -45,4 +56,6 @@ function VelVerlet(md :: MDSystem)
         a₂ = md.f[:, i]
         md.v[:, i] += md.step / 2 * (a₁ + a₂)
     end
+end
+
 end
