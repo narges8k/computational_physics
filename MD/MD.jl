@@ -95,4 +95,15 @@ function Temprature_cal(md :: MDSystem)
     md.T = md.Eₖ / md.N
 end
 
+function Pressure_cal(md :: MDSystem)
+    Σrterm = 0.0
+    Σvᵢ² = sum(md.v .^2)
+    for i in 1:md.N - 1
+        for j in i+1: md.N
+            Δr = sqrt(sum(md.r[:, i] - md.r[:, j]) .^ 2)
+            Σrterm += (Δr ^(-12) - 1/2 * Δr ^(-6))
+        end
+
+    end
+end
 end
