@@ -12,11 +12,22 @@ mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared 
         v .-= mean(v, dims = 2) # This way the COM's velocity becomes zero => Temperature is no longer dependent on velocity
         v *= sqrt(2*T₀ / mean(v .^ 2))
         F = Matrix{FT}(undef, 2, N)
-        return new{DT}(l, h, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, f, r, v)
+        return new{DT}(L, step, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, F, r, v)
     end
 end
-function initialize(md :: MDSystem)
-
+function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
+    md = MDSystem(N, T₀, step, L)
+    alignleft(md)
+    for i in 1:md.N
+        force_cal(md, i)
+    end
+    VelVerlet(md)
+    Boundary_condition(md)
+    Potential_cal(md)
+    Kinetic_cal(md)
+    Temprature_cal(md)
+    Pressure_cal(md)
+    return md
 end
 
 function Boundary_condition(md::MDSystem)
