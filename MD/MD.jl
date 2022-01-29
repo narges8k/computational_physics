@@ -9,7 +9,7 @@ mutable struct MDSystem{FT<:AbstractFloat} #indicating that the newly declared a
     N :: Integer
     r:: Matrix{FT}; v :: Matrix{FT}; F :: Matrix{FT}
 
-    function MDSystem(N :: Integer, L :: FT, T₀ :: FT, Δt :: FT) where {FT<:AbstractFloat}
+    function MDSystem(N :: Integer, L :: FT, T₀ :: FT, step :: FT) where {FT<:AbstractFloat}
         r = rand(FT, N, 2) * L
         v = rand(FT, N, 2) .- 0.5
         v .-= mean(v, dims = 2) # This way the COM's velocity becomes zero => Temperature is no longer dependent on velocity
@@ -19,7 +19,7 @@ mutable struct MDSystem{FT<:AbstractFloat} #indicating that the newly declared a
     end
 end
 
-function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
+function initialize(N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
     md = MDSystem(N, T₀, step, L)
     alignleft(md)
     for i in 1:md.N
@@ -56,7 +56,7 @@ function alignleft!(md::MDSystem)
     ys = collect(range(0.1 * md.L, 0.9 * md.L, length = ycount))
     md.r[2, :] .= repeat(ys, inner = xcount, outer = 1)[1:md.N]
 end
-# why !
+
 function Potential_cal(md :: MDSystem)
     ΣΔr = 0.0
     for i in 1:md.N - 1
