@@ -99,11 +99,24 @@ function Pressure_cal(md :: MDSystem)
     Σrterm = 0.0
     Σvᵢ² = sum(md.v .^2)
     for i in 1:md.N - 1
-        for j in i+1: md.N
-            Δr = sqrt(sum(md.r[:, i] - md.r[:, j]) .^ 2)
-            Σrterm += (Δr ^(-12) - 1/2 * Δr ^(-6))
+        for j in i+1:md.N
+            rp = md.r[:, j]
+            Δx = md.r[1, i] - rp[1]
+            Δy = md.r[2, i] - rp[2]
+            if Δx < -md.L / 2 
+                rp[1] += md.L
+            elseif Δy < -md.L / 2
+                rp[2] += md.L
+            elseif Δx > md.L / 2
+                rp[1] -= md.L
+            elseif Δy > md.L / 2
+                rp[2] -= md.L
+            end
+            Δr = sqrt(sum(md.r[:, i] - rp) .^ 2)
+            Σrterm += (Δr ^ (-12) - 1/2 *Δr ^ (-6))
         end
-
     end
+    md.p = (Σvᵢ² + 48 * Σrterm)/(2 * md.L * md.L)
 end
+
 end
