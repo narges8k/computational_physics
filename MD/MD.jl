@@ -1,4 +1,7 @@
 module MD
+
+export 
+
 using LaTeXStrings, Plots, Statistics 
 #mutable struct -> instances of the composite types can be modified.
 mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared abstract type is a subtype of this "parent" type. 
@@ -14,20 +17,6 @@ mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared 
         F = Matrix{FT}(undef, 2, N)
         return new{DT}(L, step, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, F, r, v)
     end
-end
-function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
-    md = MDSystem(N, T₀, step, L)
-    alignleft(md)
-    for i in 1:md.N
-        force_cal(md, i)
-    end
-    VelVerlet(md)
-    Boundary_condition(md)
-    Potential_cal(md)
-    Kinetic_cal(md)
-    Temprature_cal(md)
-    Pressure_cal(md)
-    return md
 end
 
 function Boundary_condition(md::MDSystem)
@@ -130,4 +119,26 @@ function Pressure_cal(md :: MDSystem)
     md.p = (Σvᵢ² + 48 * Σrterm)/(2 * md.L * md.L)
 end
 
+function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
+    md = MDSystem(N, T₀, step, L)
+    alignleft(md)
+    for i in 1:md.N
+        force_cal(md, i)
+    end
+    VelVerlet(md)
+    Boundary_condition(md)
+    Potential_cal(md)
+    Kinetic_cal(md)
+    Temprature_cal(md)
+    Pressure_cal(md)
+    return md
+end
+
+function Sim_process(md :: MDStystem)
+    VelVerlet(md)
+    Boundary_condition(md)
+    Potential_cal(md)
+    Kinetic_cal(md)
+    Temprature_cal(md)
+    Pressure_cal(md)
 end
