@@ -1,25 +1,48 @@
 module MD
 
-export 
+export Sim_process, initialize
 
 using LaTeXStrings, Plots, Statistics 
 #mutable struct -> instances of the composite types can be modified.
-mutable struct MDStystem{FT<:AbstractFloat} #indicating that the newly declared abstract type is a subtype of this "parent" type. 
-    step ::FT; L :: FT; Eᵤ :: FT; Eₖ :: FT; T :: FT; P :: FT
+mutable struct MDSystem{FT<:AbstractFloat} #indicating that the newly declared abstract type is a subtype of this "parent" type. 
+    step :: FT; L :: FT; Eᵤ :: FT; Eₖ :: FT; T :: FT; P :: FT
     N :: Integer
     r:: Matrix{FT}; v :: Matrix{FT}; F :: Matrix{FT}
 
-    function MDSystem(N :: Integer, L :: FT, T₀ :: FT, Δt :: FT)
+    function MDSystem(N :: Integer, L :: FT, T₀ :: FT, Δt :: FT) where {FT<:AbstractFloat}
         r = rand(FT, N, 2) * L
         v = rand(FT, N, 2) .- 0.5
         v .-= mean(v, dims = 2) # This way the COM's velocity becomes zero => Temperature is no longer dependent on velocity
         v *= sqrt(2*T₀ / mean(v .^ 2))
         F = Matrix{FT}(undef, 2, N)
-        return new{DT}(L, step, DT(NaN), DT(NaN), DT(NaN), DT(NaN), N, F, r, v)
+        return new{FT}(L, step, FT(NaN), FT(NaN), FT(NaN), FT(NaN), N, F, r, v)
     end
 end
 
-function Boundary_condition(md::MDSystem)
+function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
+    md = MDSystem(N, T₀, step, L)
+    alignleft(md)
+    for i in 1:md.N
+        force_cal(md, i)
+    end
+    VelVerlet(md)
+    Boundary_condition(md)
+    Potential_cal(md)
+    Kinetic_cal(md)
+    Temprature_cal(md)
+    Pressure_cal(md)
+    return md
+end
+
+function Sim_process(md :: MDSystem)
+    VelVerlet(md)
+    Boundary_condition(md)
+    Potential_cal(md)
+    Kinetic_cal(md)
+    Temprature_cal(md)
+    Pressure_cal(md)
+end
+function Boundary_condition(md :: MDSystem)
     md.r = (md.r .+ md.L) .% md.L
 end
 
@@ -57,7 +80,7 @@ function Potential_cal(md :: MDSystem)
     md.Eᵤ = 4 * ΣΔr
 end
 
-function Force_cal(md :: MDStystem, i :: Integer)
+function Force_cal(md :: MDSystem, i :: Integer)
     md.r[:, i] = 0.0
     for j in setdiff(1:md.N, i)
         rp = md.r[:, j]
@@ -119,26 +142,4 @@ function Pressure_cal(md :: MDSystem)
     md.p = (Σvᵢ² + 48 * Σrterm)/(2 * md.L * md.L)
 end
 
-function initialize(; N::Integer, T₀::FT, step::FT, L::FT) where {FT<:AbstractFloat}
-    md = MDSystem(N, T₀, step, L)
-    alignleft(md)
-    for i in 1:md.N
-        force_cal(md, i)
-    end
-    VelVerlet(md)
-    Boundary_condition(md)
-    Potential_cal(md)
-    Kinetic_cal(md)
-    Temprature_cal(md)
-    Pressure_cal(md)
-    return md
-end
-
-function Sim_process(md :: MDStystem)
-    VelVerlet(md)
-    Boundary_condition(md)
-    Potential_cal(md)
-    Kinetic_cal(md)
-    Temprature_cal(md)
-    Pressure_cal(md)
 end
