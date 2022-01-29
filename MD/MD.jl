@@ -30,7 +30,29 @@ function alignleft!(md::MDSystem)
     md.r[2, :] .= repeat(ys, inner = xcount, outer = 1)[1:md.N]
 end
 # why !
-function force_cal(md :: MDStystem, i :: Integer)
+function Potential_cal(md :: MDSystem)
+    ΣΔr = 0.0
+    for i in 1:md.N - 1
+        for j in i+1:md.N
+            rp = md.r[:, j]
+            Δx = md.r[1, i] - rp[1]
+            Δy = md.r[2, i] - rp[2]
+            if Δx < -md.L / 2 
+                rp[1] += md.L
+            elseif Δy < -md.L / 2
+                rp[2] += md.L
+            elseif Δx > md.L / 2
+                rp[1] -= md.L
+            elseif Δy > md.L / 2
+                rp[2] -= md.L
+            end
+            Δr = sqrt(sum(md.r[:, i] - rp) .^ 2)
+            ΣΔr += (Δr ^ (-12) - Δr ^ (-6))
+        end
+    end
+    md.Eᵤ = 4 * ΣΔr
+end
+function Force_cal(md :: MDStystem, i :: Integer)
     md.r[:, i] = 0.0
     for j in setdiff(1:md.N, i)
         rp = md.r[:, j]
