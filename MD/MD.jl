@@ -19,6 +19,10 @@ function initialize(md :: MDSystem)
 
 end
 
+function Boundary_condition(md::MDSystem)
+    md.r = (md.r .+ md.L) .% md.L
+end
+
 function alignleft!(md::MDSystem) 
     xcount = ceil(Integer, (2 * md.N)^(1 / 2) / 2)
     ycount = 2 * xcount
@@ -52,6 +56,7 @@ function Potential_cal(md :: MDSystem)
     end
     md.Eᵤ = 4 * ΣΔr
 end
+
 function Force_cal(md :: MDStystem, i :: Integer)
     md.r[:, i] = 0.0
     for j in setdiff(1:md.N, i)
