@@ -1,5 +1,6 @@
 using Plots
 using Statistics
+using ProgressBars
 arr=zeros((200,200))
 n=30000
 count=1
@@ -19,8 +20,8 @@ function mean_calculater(arr,meanList)
     push!(meanList, mean_num)
     return meanList
 end
-
-for i in 1:n
+anim = Animation()
+for i in ProgressBar(1:n)
     column=rand(1:200)
     row=1
     for j in 1:200
@@ -34,8 +35,11 @@ for i in 1:n
     if i%(10*200*count)==0
         count+=1
     end
-    meanList=mean_calculater(arr,meanList)
+    p = heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
+    frame(anim, p)
+    #meanList=mean_calculater(arr,meanList)
 end
+gif(anim,"C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RBD.gif",fps=50)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDeposition1.png")
 scatter!(1:n,meanList, xlabel="time", ylabel="mean hight of the layer")

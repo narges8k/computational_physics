@@ -1,6 +1,7 @@
 using Plots
 using Statistics
-L=201
+using ProgressBars
+L=101
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -81,7 +82,8 @@ function deposing(L,n)
     meanList=[]
     stdList=[]
     finalP=n
-    for particle in 1:n
+    anim = Animation()
+    for particle in ProgressBar(1:n)
         col=rand(1:L)
         height=neighbor_checking(arr, col)
         if height>=L
@@ -91,15 +93,19 @@ function deposing(L,n)
         if height!=1 || col==ceil(Int, L/2)
             arr[height, col]=color
         end
-        if particle%(10*200*color)==0
+        if particle%(10*L*color)==0
             color+=1
         end
         WidthNum=width_cal(arr, L)
         push!(WidthList, WidthNum)
+        p = heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
+        frame(anim, p)
     end
+    gif(anim,"C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.4.gif",fps=50)
+
     return arr, WidthList, finalP
 end
-arr, WidthList, finalP=deposing(L,30000)
+arr, WidthList, finalP=deposing(L,15000)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.4.png")
 scatter(1:finalP, WidthList, xlabel="time",ylabel="width of the shrub" , markersize=0.001)

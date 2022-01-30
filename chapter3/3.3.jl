@@ -1,6 +1,7 @@
 using Plots
 using Statistics
-L=200
+using ProgressBars
+L=100
 function BoundaryCondition(i)
     if i==L+1
         return 1
@@ -46,11 +47,12 @@ function mean_calculater(arr,L)
     return mean(h)
 end
 function deposing(L,n)
-    arr=zeros((200, 200))
+    arr=zeros((L, L))
     meanList=[]
     color=1
     finalP=n
-    for particle in 1:n
+    anim = Animation()
+    for particle in ProgressBar(1:n)
         col=rand(1:L)
         height=neighbor_checking(arr, col)
         if height>=L
@@ -58,15 +60,18 @@ function deposing(L,n)
             break
         end
         arr[height, col]=color
-        if particle%(10*200*color)==0
+        if particle%(10*L*color)==0
             color+=1
         end
-        meanNum=mean_calculater(arr,L)
-        push!(meanList, meanNum)
+        #meanNum=mean_calculater(arr,L)
+        #push!(meanList, meanNum)
+        p = heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
+        frame(anim, p)
     end
-    return arr, meanList, stdList, finalP
+    gif(anim,"C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3.gif",fps=70)
+    return arr, meanList, finalP
 end
-arr,meanList, stdList, finalP=deposing(L,30000)
+arr,meanList, finalP=deposing(L,15000)
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\3.3_1.png")
 scatter(1:finalP-1,meanList, xlabel="time", ylabel="mean height of the layer")

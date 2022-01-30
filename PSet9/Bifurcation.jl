@@ -12,9 +12,13 @@ end
 r_s=collect(range(0.0, 1.0, step=10^(-4)))
 x₀_s = rand(100)
 x_s=zeros(length(r_s), length(x₀_s))
+anim = Animation()
 for (i,r) in enumerate(r_s)
     x_s[i,:]=LogisticMap(x₀_s, r, 10^4 )
+    p = scatter(r_s, x_s)
+    frame(anim, p)
 end
+gif(anim,"../../computational_physics/PSet9/Figs/Bifurcation.gif",fps=50)
 scatter(r_s, x_s, legend=false, ms=0.5, color=:black, dpi=400, xlabel=L"r", ylabel=L"x", title=L"Logistic\ Map\ :\ x_n_+_1\ =\ 4rx_n(1-x_n)")
 savefig("../../computational_physics/PSet9/Figs/Bifurcation.pdf")
 

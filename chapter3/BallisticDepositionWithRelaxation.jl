@@ -1,6 +1,7 @@
 using Plots
 using DataStructures
 using Statistics
+using ProgressBars
 L=200
 function BoundaryCondition(i)
     if i==L+1
@@ -47,7 +48,8 @@ function deposing(L,n)
     color=1
     meanList=[]
     arr=zeros((L,L))
-    for particle in 1:n
+    anim = Animation()
+    for particle in ProgressBar(1:n)
         column=rand(1:L)
         col=ColumnChoosing(arr, column)
         row=1
@@ -59,15 +61,19 @@ function deposing(L,n)
                 row+=1
             end
         end
-        if particle%(10*200*color)==0
+        if particle%(10*L*color)==0
             color+=1
         end
-        meanNum=mean_calculater(arr,L)
-        push!(meanList, meanNum)
+        p = heatmap(hcat(arr))
+        frame(anim, p)
+        #meanNum=mean_calculater(arr,L)
+        #push!(meanList, meanNum)
     end
+    gif(anim,"C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\bdw.gif",fps=80)
     return arr, meanList
 end
 arr,meanList=deposing(L,30000) #for plotting the dynamics and mean: n=30000
+
 heatmap(hcat(arr), c=cgrad(:roma, 10, categorical = true, scale = :exp), xlabel="L")
 savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\chapter3\\Fig\\RandomBallisticDepositionWithRelaxation.png")
 scatter(1:30000,meanList, xlabel="time", ylabel="mean height of the layer")

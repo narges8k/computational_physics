@@ -63,13 +63,13 @@ function Potential_cal(md :: MDSystem)
             Δx = md.r[1, i] - rp[1]
             Δy = md.r[2, i] - rp[2]
             if Δx < -md.L / 2 
-                rp[1] -= md.L
-            elseif Δy < -md.L / 2
-                rp[2] -= md.L
-            elseif Δx > md.L / 2
                 rp[1] += md.L
-            elseif Δy > md.L / 2
+            elseif Δy < -md.L / 2
                 rp[2] += md.L
+            elseif Δx > md.L / 2
+                rp[1] -= md.L
+            elseif Δy > md.L / 2
+                rp[2] -= md.L
             end
             Δr = sqrt(sum((md.r[:, i] - rp) .^ 2))
             ΣΔr += ((Δr) ^ (-12)) - ((Δr) ^ (-6))
@@ -85,13 +85,13 @@ function Force_cal(md :: MDSystem, i :: Integer)
         Δx = md.r[1, i] - rp[1]
         Δy = md.r[2, i] - rp[2]
         if Δx < -md.L / 2 
-            rp[1] -= md.L
-        elseif Δy < -md.L / 2
-            rp[2] -= md.L
-        elseif Δx > md.L / 2
             rp[1] += md.L
-        elseif Δy > md.L / 2
+        elseif Δy < -md.L / 2
             rp[2] += md.L
+        elseif Δx > md.L / 2
+            rp[1] -= md.L
+        elseif Δy > md.L / 2
+            rp[2] -= md.L
         end
         Δr = sqrt(sum((md.r[:, i] - rp) .^ 2))
         md.F[:, i] += 48 * (((Δr)^-14) - 0.5 * ((Δr)^-8)) * (md.r[:, i] - rp)
@@ -125,13 +125,13 @@ function Pressure_cal(md :: MDSystem)
             Δx = md.r[1, i] - rp[1]
             Δy = md.r[2, i] - rp[2]
             if Δx < -md.L / 2 
-                rp[1] -= md.L
-            elseif Δy < -md.L / 2
-                rp[2] -= md.L
-            elseif Δx > md.L / 2
                 rp[1] += md.L
-            elseif Δy > md.L / 2
+            elseif Δy < -md.L / 2
                 rp[2] += md.L
+            elseif Δx > md.L / 2
+                rp[1] -= md.L
+            elseif Δy > md.L / 2
+                rp[2] -= md.L
             end
             Δr = sqrt(sum(md.r[:, i] - rp) .^ 2)
             Σrterm += ((Δr) ^ (-12)) - (1/2) * ((Δr) ^ (-6))
@@ -142,7 +142,7 @@ end
 
 
 N = 100; T₀ = 1.0; h = 0.001; L = 50.0; step_num = 20000
-md = Initialize(N, T₀ , L, h)
+md = Initialize(N, T₀ , h, L)
 
 Poses = zeros(step_num, 2, N)
 Velocities = zeros(step_num, 2, N)
@@ -165,4 +165,9 @@ save("../../MD/SingleData.jld",
     "Poses", Poses, "Velocities", Velocities, "Potentials", Potentials, 
     "Kinetics", Kinetics, "Temps", Temps, "Pressures", pressures)
 
-plot(collect(0:h:(h*step_num))[1:10000], [count(<=(md.L / 2), Poses[i, 1, :]) / md.N for i ∈ 1:step_num][1:10000])
+plot(collect(0:h:(h*step_num))[1:200], [count(<=(md.L / 2), Poses[i, 1, :]) / md.N for i ∈ 1:step_num][1:200],
+    ylabel=L"N_l_e_f_t/N", xlabel=L"t/\tau", dpi=400, title=L"Molecules'\ Densities\ at\ the\ left\ half", legend=false)
+savefig("C:\\Users\\Narges\\Documents\\GitHub\\computational_physics\\MD\\Figs\\LeftHalfDensity.png")
+
+plot(collect(0:h:(h*step_num))[1:300],Kinetics[1:300])
+plot(collect(0:h:(h*step_num))[1:300],Potentials[1:300], ylim = (0, -100))
