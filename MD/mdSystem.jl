@@ -10,7 +10,7 @@ mutable struct MDSystem{FT<:AbstractFloat} #indicating that the newly declared a
         r = rand(FT, 2, N) * L
         v = rand(FT, 2, N) .- 0.5
         v .-= mean(v, dims = 2) # This way the COM's velocity becomes zero => Temperature is no longer dependent on velocity
-        v *= sqrt(2*T₀ / mean(v .^ 2))
+        v *= sqrt(T₀ / mean(v .^ 2))
         F = Matrix{FT}(undef, 2, N)
         return new{FT}(L, step, FT(NaN), FT(NaN), FT(NaN), FT(NaN), N, F, r, v)
     end
@@ -39,6 +39,7 @@ function Sim_process(md :: MDSystem)
     Temprature_cal(md)
     Pressure_cal(md)
 end
+
 function Boundary_condition(md :: MDSystem)
     md.r = (md.r .+ md.L) .% md.L
 end
@@ -62,16 +63,16 @@ function Potential_cal(md :: MDSystem)
             Δx = md.r[1, i] - rp[1]
             Δy = md.r[2, i] - rp[2]
             if Δx < -md.L / 2 
-                rp[1] += md.L
-            elseif Δy < -md.L / 2
-                rp[2] += md.L
-            elseif Δx > md.L / 2
                 rp[1] -= md.L
-            elseif Δy > md.L / 2
+            elseif Δy < -md.L / 2
                 rp[2] -= md.L
+            elseif Δx > md.L / 2
+                rp[1] += md.L
+            elseif Δy > md.L / 2
+                rp[2] += md.L
             end
             Δr = sqrt(sum((md.r[:, i] - rp) .^ 2))
-            ΣΔr += (Δr ^ (-12) - Δr ^ (-6))
+            ΣΔr += ((Δr) ^ (-12)) - ((Δr) ^ (-6))
         end
     end
     md.Eᵤ = 4 * ΣΔr
@@ -84,13 +85,13 @@ function Force_cal(md :: MDSystem, i :: Integer)
         Δx = md.r[1, i] - rp[1]
         Δy = md.r[2, i] - rp[2]
         if Δx < -md.L / 2 
-            rp[1] += md.L
-        elseif Δy < -md.L / 2
-            rp[2] += md.L
-        elseif Δx > md.L / 2
             rp[1] -= md.L
-        elseif Δy > md.L / 2
+        elseif Δy < -md.L / 2
             rp[2] -= md.L
+        elseif Δx > md.L / 2
+            rp[1] += md.L
+        elseif Δy > md.L / 2
+            rp[2] += md.L
         end
         Δr = sqrt(sum((md.r[:, i] - rp) .^ 2))
         md.F[:, i] += 48 * (((Δr)^-14) - 0.5 * ((Δr)^-8)) * (md.r[:, i] - rp)
@@ -103,7 +104,7 @@ function VelVerlet(md :: MDSystem)
         md.r[:, i] += md.step * (md.v[:, i] + md.step / 2 * a₁)
         Force_cal(md, i)
         a₂ = md.F[:, i]
-        md.v[:, i] += md.step / 2 * (a₁ + a₂)
+        md.v[:, i] += md.step * (a₁ + a₂) / 2
     end
 end
 
@@ -124,16 +125,16 @@ function Pressure_cal(md :: MDSystem)
             Δx = md.r[1, i] - rp[1]
             Δy = md.r[2, i] - rp[2]
             if Δx < -md.L / 2 
-                rp[1] += md.L
-            elseif Δy < -md.L / 2
-                rp[2] += md.L
-            elseif Δx > md.L / 2
                 rp[1] -= md.L
-            elseif Δy > md.L / 2
+            elseif Δy < -md.L / 2
                 rp[2] -= md.L
+            elseif Δx > md.L / 2
+                rp[1] += md.L
+            elseif Δy > md.L / 2
+                rp[2] += md.L
             end
             Δr = sqrt(sum(md.r[:, i] - rp) .^ 2)
-            Σrterm += (Δr ^ (-12) - 1/2 *Δr ^ (-6))
+            Σrterm += ((Δr) ^ (-12)) - (1/2) * ((Δr) ^ (-6))
         end
     end
     md.P = (Σvᵢ² + 48 * Σrterm)/(2 * md.L * md.L)
@@ -164,3 +165,4 @@ save("../../MD/SingleData.jld",
     "Poses", Poses, "Velocities", Velocities, "Potentials", Potentials, 
     "Kinetics", Kinetics, "Temps", Temps, "Pressures", pressures)
 
+plot(collect(0:h:(h*step_num))[1:10000], [count(<=(md.L / 2), Poses[i, 1, :]) / md.N for i ∈ 1:step_num][1:10000])
